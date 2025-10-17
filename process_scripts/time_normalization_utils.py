@@ -62,8 +62,8 @@ def normalize_cycle_times(cycles: List, battery_id: Optional[str] = None) -> Lis
         if not hasattr(cycle, 'time_in_s') or not cycle.time_in_s:
             continue
 
-        # Fix internal resets within the cycle
-        fixed_times, _ = fix_internal_resets(cycle.time_in_s)
+        # Fix internal resets within the cycle (with dataset-specific handling)
+        fixed_times, _ = fix_internal_resets(cycle.time_in_s, battery_id)
 
         # Make times relative to cycle start
         min_time = min(fixed_times) if fixed_times else 0
@@ -88,7 +88,8 @@ def handle_special_time_formats(cycles: List, battery_id: Optional[str] = None) 
 
     Special cases:
     - ISU_ILCC: Nanosecond timestamps (values > 1e15)
-    - RWTH/HNEI: Large initial time offsets
+    - RWTH: Millisecond timestamps (need to divide by 1000)
+    - HNEI: Large initial time offsets
 
     Args:
         cycles: List of CycleData objects
@@ -108,28 +109,39 @@ def handle_special_time_formats(cycles: List, battery_id: Optional[str] = None) 
             if hasattr(cycle, 'time_in_s') and cycle.time_in_s:
                 cycle.time_in_s = [t / 1e9 for t in cycle.time_in_s]
 
+    # Handle RWTH dataset millisecond timestamps
+    elif battery_id and 'RWTH' in battery_id:
+        for cycle in cycles:
+            if hasattr(cycle, 'time_in_s') and cycle.time_in_s:
+                cycle.time_in_s = [t / 1000 for t in cycle.time_in_s]
+
     return cycles
 
 
-def fix_internal_resets(times: List[float]) -> Tuple[List[float], Dict]:
+def fix_internal_resets(times: List[float], battery_id: Optional[str] = None) -> Tuple[List[float], Dict]:
     """
     Fix internal time resets within a single cycle.
 
     This function identifies and corrects time resets that occur within a cycle,
     which are common in step-based cycling protocols (charge->rest->discharge->rest).
 
+    For MATR dataset: Also removes abnormally large time gaps (>1000s) that may be caused
+    by power outages or manual interventions during testing.
+
     Detection methods:
     1. Explicit reset to zero (after first element)
     2. Significant decrease (>50% drop when previous value >10s)
     3. Large backward jump (>100s backward)
+    4. Large forward gap (>1000s for MATR dataset)
 
     Args:
         times: List of time values from a single cycle
+        battery_id: Optional battery ID for dataset-specific handling
 
     Returns:
         Tuple of (fixed_times, reset_info) where:
         - fixed_times: List with continuous time values
-        - reset_info: Dict with reset count and positions
+        - reset_info: Dict with reset count, positions, and gaps removed
 
     Example:
         >>> times = [0, 100, 200, 0, 100, 200]  # Reset at index 3
@@ -138,71 +150,60 @@ def fix_internal_resets(times: List[float]) -> Tuple[List[float], Dict]:
         [0, 100, 200, 200, 300, 400]
     """
     if not times or len(times) <= 1:
-        return times, {'reset_count': 0, 'reset_positions': []}
+        return times, {'reset_count': 0, 'reset_positions': [], 'large_gaps_removed': 0}
 
-    # Find all reset points and create segments
-    segments = []
-    current_segment = []
-    reset_positions = []
-
-    for i in range(len(times)):
-        if i == 0:
-            # First element starts the first segment
-            current_segment = [times[i]]
-        else:
-            # Check for reset conditions
-            is_reset = False
-
-            # Method 1: Explicit zero (after first element)
-            if times[i] == 0 and i > 0:
-                is_reset = True
-
-            # Method 2: Significant decrease (more than 50% drop)
-            elif times[i] < times[i-1] * 0.5 and times[i-1] > 10:
-                is_reset = True
-
-            # Method 3: Large backward jump (more than 100 seconds)
-            elif times[i] < times[i-1] - 100:
-                is_reset = True
-
-            if is_reset:
-                # Save current segment and start new one
-                if current_segment:
-                    segments.append(current_segment)
-                current_segment = [times[i]]
-                reset_positions.append(i)
-            else:
-                # Continue current segment
-                current_segment.append(times[i])
-
-    # Add final segment
-    if current_segment:
-        segments.append(current_segment)
-
-    # If no resets found, return original
-    if len(segments) == 1:
-        return times, {'reset_count': 0, 'reset_positions': []}
-
-    # Concatenate segments with continuous time
+    # Process time values to fix resets and remove large gaps
     continuous_times = []
     accumulated_time = 0.0
+    reset_positions = []
+    large_gaps_removed = 0
 
-    for segment in segments:
-        # Make segment relative to its start
-        segment_start = segment[0] if segment else 0
-        relative_segment = [t - segment_start for t in segment]
+    # First time point
+    continuous_times.append(accumulated_time)
 
-        # Add to continuous times with accumulated offset
-        for t in relative_segment:
-            continuous_times.append(t + accumulated_time)
+    for i in range(1, len(times)):
+        time_diff = times[i] - times[i-1]
 
-        # Update accumulated time
-        if relative_segment:
+        # Check for reset conditions
+        is_reset = False
+        is_large_gap = False
+
+        # Method 1: Explicit zero (after first element)
+        if times[i] == 0 and i > 0:
+            is_reset = True
+            reset_positions.append(i)
+        # Method 2: Significant decrease (more than 50% drop)
+        elif times[i] < times[i-1] * 0.5 and times[i-1] > 10:
+            is_reset = True
+            reset_positions.append(i)
+        # Method 3: Large backward jump (more than 100 seconds)
+        elif times[i] < times[i-1] - 100:
+            is_reset = True
+            reset_positions.append(i)
+        # Method 4: Handle abnormally large gaps for MATR dataset
+        elif battery_id and 'MATR' in battery_id and time_diff > 1000:
+            # For MATR dataset, remove gaps larger than 1000 seconds
+            # These gaps are likely due to power outages or manual interventions
+            is_large_gap = True
+            large_gaps_removed += 1
+
+        if is_reset:
+            # Handle reset: continue from previous accumulated time
             accumulated_time = continuous_times[-1]
+            continuous_times.append(accumulated_time)
+        elif is_large_gap:
+            # Remove large gap, use typical sampling interval instead (5 seconds)
+            accumulated_time += 5.0
+            continuous_times.append(accumulated_time)
+        else:
+            # Normal time progression
+            accumulated_time += time_diff
+            continuous_times.append(accumulated_time)
 
     return continuous_times, {
         'reset_count': len(reset_positions),
-        'reset_positions': reset_positions
+        'reset_positions': reset_positions,
+        'large_gaps_removed': large_gaps_removed
     }
 
 
