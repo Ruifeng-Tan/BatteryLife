@@ -273,6 +273,10 @@ def calculate_soc_start_and_end(df, name, nominal_capacity=0.25):
     if soc_discharge_interval > 1:
         soc_discharge_interval = 0
     discharge_end_soc[name] = 1 - soc_discharge_interval
+
+    if charge_start_soc[name] == 1 and discharge_end_soc[name] == 1:
+        charge_start_soc[name] = 0
+        discharge_end_soc[name] = 1
     return charge_start_soc, discharge_end_soc
 
 CYCLING_RATES = {
