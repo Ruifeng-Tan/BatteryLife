@@ -28,8 +28,7 @@ for file_name in tqdm(files):
             nominal_capacity = data['nominal_capacity_in_Ah']
         SOC_interval = data['SOC_interval']  # get the charge and discharge soc interval
         SOC_interval = SOC_interval[1] - SOC_interval[0]
-        if SOC_interval == 0:
-            SOC_interval = 1 # fully charge and discharge
+
         last_cycle_soh = max(last_cycle['discharge_capacity_in_Ah']) / nominal_capacity / SOC_interval
 
 
