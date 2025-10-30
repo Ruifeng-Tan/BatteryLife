@@ -2,13 +2,15 @@
 
 This is the official repository for [BatteryLife: A Comprehensive Dataset and Benchmark for Battery Life Prediction](https://dl.acm.org/doi/10.1145/3711896.3737372). If you find this repository useful, we would appreciate citations to our paper and stars to this repository.
 
+:triangular_flag_on_post:**News** (2025.10) Added the standardized [SDU dataset](https://www.cell.com/cell-reports-physical-science/fulltext/S2666-3864(25)00256-5) to BatteryLife. Corrected the time_in_s column for all batteries.
+
 🔥**News** (2025.08) BatteryLife downloads exceed 10,000.
 
 🔥**News** (2025.07) BatteryLife downloads exceed 7,000.
 
 🔥**News** (2025.06) BatteryLife downloads exceed 5,000.
 
-:triangular_flag_on_post:**News** (2025.06) Add the complete Stanford dataset as "Stanford_2" (now including both releases of the Stanford dataset).
+:triangular_flag_on_post:**News** (2025.06) Added the complete Stanford dataset as "Stanford_2" (now including both releases of the Stanford dataset).
 
 :triangular_flag_on_post:**News** (2025.05) BatteryLife was accpeted by KDD 2025.
 
@@ -17,6 +19,7 @@ This is the official repository for [BatteryLife: A Comprehensive Dataset and Be
 :triangular_flag_on_post:**News** (2025.02) BatteryLife was released!
 
 ## Highlights
+(Data statistics are based on the initial release of BatteryLife.)
 
 - **The largest battery life dataset:** BatteryLife is created by integrating 16 datasets, providing 99,000 samples from 990 batteries with life labels. This is 2.5 times the size of BatteryML, which is the previous largest battery life resource.
 - **The most diverse battery life dataset:** BatteryLife contains 8 battery formats, 59 chemical systems, 9 operation temperatures, and 421 charge/discharge protocols. Compared with the previous largest battery life resource (BatteryML), BatteryLife furnishes 4 times format, 11.8 times chemical system, 1.8 times operating temperature, and 2.2 times charge/discharge protocol.
@@ -27,7 +30,7 @@ This is the official repository for [BatteryLife: A Comprehensive Dataset and Be
 The processed datasets can be accessed via multiple ways:
 
 1. You can download the datasets from [Huggingface](https://huggingface.co/datasets/Hongwxx/BatteryLife_processed/tree/main) [[tutorial]](./assets/Data_download.md).
-2. You can download the datasets from [Zenodo](https://zenodo.org/records/15531867).
+2. You can download the datasets from [Zenodo](https://zenodo.org/records/17451571).
 
 Note that brief introductions to each dataset are available under the directory of each dataset.
 
@@ -43,6 +46,7 @@ All the raw datasets are publicly available, interested users can download them 
 - Tongji: [link](https://zenodo.org/records/6405084)
 - Stanford: [link](https://data.matr.io/8/)
 - HNEI, SNL, MICH, MICH_EXP and UL_PUR datasets: [BatteryArchive](https://www.batteryarchive.org/index.html).
+- SDU dataset: [link](https://zenodo.org/records/14859405).
 
 ## Benchmark results of Battery Life Prediction (BLP) task
 
@@ -172,6 +176,7 @@ series = {KDD '25}
 
 - Additionally, please cite the original papers that conducted experiments. Please cite [BatteryArchive](https://www.batteryarchive.org/index.html) as the data source for the HNEI, SNL, MICH, MICH_EXP, and UL_PUR datasets.
 - Please cite [BatteryML](https://iclr.cc/virtual/2024/poster/17628) if you use the processed CALCE, MATR, HUST, HNEI, RWTH, SNL, and UL_PUR datasets. Our preprocessing for these 7 datasets relies heavily on BatteryML's preprocessing scripts.
+- Please cite [SDU paper](https://www.cell.com/cell-reports-physical-science/fulltext/S2666-3864(25)00256-5) if you use the SDU dataset.
 
 
 ## Acknowledgement
