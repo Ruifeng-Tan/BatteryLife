@@ -20,7 +20,7 @@ from .time_normalization_utils import normalize_cycle_times
 class CALBPreprocessor(BasePreprocessor):
     def process(self, parent_dir, **kwargs) -> List[BatteryData]:
         path = Path(parent_dir)
-        files_path_list = ['0度', '25度', '35度', '45度']  # drop the -10 batch for its capacity retention bigger than 0.925 
+        files_path_list = ['0度', '25度', '35度', '45度']  # drop the -10 batch for its capacity retention bigger than 0.925
         process_batteries_num = 0
         skip_batteries_num = 0
         for files_path in files_path_list:
@@ -113,13 +113,26 @@ def organize_cell(timeseries_df, name, C, temperature):
                 seconds = (h * 3600 + m * 60 + s)
                 times.append(seconds)
 
+            if '_0' in name:
+                capacities = df['容量(Ah)'].tolist()
+                discharge_capacities = df['放电容量(Ah)'].tolist()
+                charge_capacities = list(np.array(capacities) - np.array(discharge_capacities))
+            else:
+                charge_capacities = []
+                for cc in list(df['充电容量(Ah)'].values):
+                    if len(charge_capacities) == 0:
+                        charge_capacities.append(cc)
+                    else:
+                        accumulate_cc = charge_capacities[-1] + cc
+                        charge_capacities.append(accumulate_cc)
+
             cycle_data.append(CycleData(
                 cycle_number=int(cycle_index),
                 voltage_in_V=df['电压(V)'].tolist(),
                 current_in_A=df['电流(A)'].tolist(),
                 temperature_in_C=list([temperature_in_C_value] * len(df)),
                 discharge_capacity_in_Ah=df['放电容量(Ah)'].tolist(),
-                charge_capacity_in_Ah=df['容量(Ah)'].tolist(),
+                charge_capacity_in_Ah=charge_capacities,
                 time_in_s=times
             ))
     # Charge Protocol is constant current
