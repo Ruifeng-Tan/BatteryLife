@@ -248,7 +248,7 @@ def organize_cell(data, name):
         charge_protocol=charge_protocol,
         nominal_capacity_in_Ah=1.1,
         min_voltage_limit_in_V=2.0,
-        max_voltage_limit_in_V=3.5,
+        max_voltage_limit_in_V=3.6,
         SOC_interval=soc_interval
     )
 
