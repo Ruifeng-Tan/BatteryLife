@@ -141,21 +141,15 @@ sh ./train_eval_scripts/domain_adaptation_script.sh
 
 ## Welcome contributions
 
-Advancing AI4Battery requires standardized datasets. However, the available battery life datasets are typically stored in different places and in different formats. We have put great efforts into integrating 13 previously available datasets and 3 of our datasets. BatteryLife serves as a platform to share all kinds of standardized datasets. We warmly welcome contributions from the community to further enhance this collection by providing datasets standardized according to the BatteryLife standards.
+Advancing AI4Battery requires standardized datasets. However, the available battery life datasets are typically stored in different places and in different formats. We have put great efforts into integrating 13 previously available datasets and 3 of our datasets. BatteryLife aims to become a unified platform for sharing standardized battery aging and lifetime datasets. We warmly welcome contributions from the community—whether by sharing new datasets or standardizing existing ones according to the BatteryLife guidelines.
 
-To further expand the battery life dataset, we have here provided the currently open-source but yet unprocessed datasets in this field along with their relevant information. We warmly welcome interested researchers to join us in continuously expanding the scale and influence of the battery life prediction community.
-
-### New datasets need to be preprocessed
+To further broaden the range of available resources, we list below several open-source but currently unprocessed datasets in the battery life domain:
 
 | Index | Dataset Name | Release Year | Data Download Link                                           | Journals/Conferences           | Preprocess Status  |
 | ----- | ------------ | ------------ | ------------------------------------------------------------ | ------------------------------ | ------------------ |
 | 1     | CMU_eVTOL    | 2023         | [Item - eVTOL Battery Dataset - Carnegie Mellon University - Figshare](https://kilthub.cmu.edu/articles/dataset/eVTOL_Battery_Dataset/14226830/2) | Scientific Data                |                    |
 | 2     | Stanford_DC  | 2024         | [Dataset - Dynamic cycling enhances battery lifetime Stanford Digital Repository](https://purl.stanford.edu/td676xr4322) | Nature Energy                  |                    |
-| 3     | Stanford_DAT | 2025         | [Aging matrix visualizes complexity of battery aging across hundreds of cycling protocols](https://data.matr.io/11/) | Energy & Environmental Science |                    |
-| 4     | SDU          | 2025         | [Data for: Deep sorting of reused batteries for enabling long-term consistency grouping with unknown prior conditions](https://zenodo.org/records/14859405) | Cell Reports Physical Science  | :white_check_mark: |
-| ...   |              |              |                                                              |                                |                    |
-
-
+| 3     | Stanford_AM | 2025         | [Aging matrix visualizes complexity of battery aging across hundreds of cycling protocols](https://data.matr.io/11/) | Energy & Environmental Science |                    |
 
 If you are interested in contributing, please either submit a pull request or contact us via email at rtan474@connect.hkust-gz.edu.cn and whong719@connect.hkust-gz.edu.cn. To integrate your data into the BatteryLife repositories, please provide:
 
