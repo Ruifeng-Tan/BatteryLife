@@ -145,11 +145,13 @@ Advancing AI4Battery requires standardized datasets. However, the available batt
 
 To further broaden the range of available resources, we list below several open-source but currently unprocessed datasets in the battery life domain:
 
-| Index | Dataset Name | Release Year | Data Download Link                                           | Journals/Conferences           | Preprocess Status  |
-| ----- | ------------ | ------------ | ------------------------------------------------------------ | ------------------------------ | ------------------ |
-| 1     | CMU_eVTOL    | 2023         | [Item - eVTOL Battery Dataset - Carnegie Mellon University - Figshare](https://kilthub.cmu.edu/articles/dataset/eVTOL_Battery_Dataset/14226830/2) | Scientific Data                |                    |
-| 2     | Stanford_DC  | 2024         | [Dataset - Dynamic cycling enhances battery lifetime Stanford Digital Repository](https://purl.stanford.edu/td676xr4322) | Nature Energy                  |                    |
-| 3     | Stanford_AM | 2025         | [Aging matrix visualizes complexity of battery aging across hundreds of cycling protocols](https://data.matr.io/11/) | Energy & Environmental Science |                    |
+| Index | Release Year | Data Download Link                                           | Journals/Conferences           | Preprocess Status  |
+| ----- | ------------ | ------------------------------------------------------------ | ------------------------------ | ------------------ |
+| 1     | 2023         | [Item - eVTOL Battery Dataset - Carnegie Mellon University - Figshare](https://kilthub.cmu.edu/articles/dataset/eVTOL_Battery_Dataset/14226830/2) | Scientific Data                |                    |
+| 2     | 2024         | [Dataset - Dynamic cycling enhances battery lifetime Stanford Digital Repository](https://purl.stanford.edu/td676xr4322) | Nature Energy                  |                    |
+| 3     | 2025         | [Aging matrix visualizes complexity of battery aging across hundreds of cycling protocols](https://data.matr.io/11/) | Energy & Environmental Science |                    |
+| 4     | 2025         | [Degradation path prediction of lithium-ion batteries under dynamic operating sequences](https://data.mendeley.com/datasets/h2y7mj4kt7/2) | Energy & Environmental Science |                    |
+| 5     | 2025         | [Non-destructive degradation pattern decoupling for early battery trajectory prediction via physics-informed learning](https://zenodo.org/records/10715209) | Energy & Environmental Science |                    |
 
 If you are interested in contributing, please either submit a pull request or contact us via email at rtan474@connect.hkust-gz.edu.cn and whong719@connect.hkust-gz.edu.cn. To integrate your data into the BatteryLife repositories, please provide:
 
