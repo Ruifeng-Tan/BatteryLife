@@ -18,7 +18,6 @@ from batteryml import BatteryData, CycleData
 from batteryml.builders import PREPROCESSORS
 from batteryml.preprocess.base import BasePreprocessor
 from .time_normalization_utils import normalize_cycle_times
-import matplotlib.pyplot as plt
 
 
 @PREPROCESSORS.register()
@@ -52,10 +51,10 @@ class CALCEPreprocessor(BasePreprocessor):
             if not self.silent:
                 cells.set_description(f'Processing {cell} files')
 
-            files = [
-                filename for ext in ['txt', 'xlsx', 'xls']
-                for filename in rawdatadir.glob(f'*.{ext}')
-            ]
+            files = sorted([
+                f for f in rawdatadir.iterdir()
+                if f.suffix.lower() in {'.txt', '.xlsx', '.xls'}
+            ])
 
             if len(files) == 0:
                 continue
@@ -105,9 +104,9 @@ class CALCEPreprocessor(BasePreprocessor):
             # TODO: specify the charge and discharge protocols
             C = 1.1 if 'CS' in cell.upper() else 1.35
 
-            # # Skip problematic cycle
-            # if 'CX2_16' == cell.upper():
-            #     clean_cycles = clean_cycles[1:]
+            # Skip problematic cycle
+            if 'CX2_16' == cell.upper():
+                clean_cycles = clean_cycles[1:]
             soc_interval = [0, 1]
 
             # Normalize time data across all cycles
@@ -176,21 +175,24 @@ def extract_date_from_filename(filename):
 def load_excel(excel_file):
     # Load from cache if it exists
     filename = excel_file.stem + '_cache'
-    cache_file = excel_file.with_name(filename).with_suffix('.csv')
+    cache_dir = excel_file.parent / "_cache"
+    cache_dir.mkdir(exist_ok=True)
+
+    cache_file = cache_dir / f"{excel_file.stem}.csv"
+
     if cache_file.exists():
         return pd.read_csv(cache_file)
 
-    file = pd.ExcelFile(excel_file)
-
     channel_data = []
-    for sheet_name in file.sheet_names:
-        if sheet_name.startswith('Channel'):
-            channel_data.append(file.parse(sheet_name))
 
-    # Dirty data, the sheet name is Sheet1 (CX2_34_8_16_10.xlsx)
-    if len(channel_data) == 0:
+    with pd.ExcelFile(excel_file) as file:
         for sheet_name in file.sheet_names:
-            channel_data.append(file.parse(sheet_name))
+            if sheet_name.startswith('Channel'):
+                channel_data.append(file.parse(sheet_name))
+
+        if len(channel_data) == 0:
+            for sheet_name in file.sheet_names:
+                channel_data.append(file.parse(sheet_name))
 
     channel_data = pd.concat(channel_data)
     date = extract_date_from_filename(excel_file.stem)
