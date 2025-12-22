@@ -109,7 +109,7 @@ class ISU_ILCCPreprocessor(BasePreprocessor):
                 cycle_df['Q_discharge'] = pd.concat([pd.DataFrame(charge_zero_df), pd.DataFrame(cycling_dict['QV_discharge']['Q'][index])], ignore_index=True)
                 df = pd.concat([df, cycle_df], ignore_index=True)\
 
-            # Step3: drop the RPT test data in the cycling data
+            # Step3: drop the cycles after every RPT test
             df = clean_cell(df, zip_path, cell, subfolder)
 
             # Step4: organize the cell data
