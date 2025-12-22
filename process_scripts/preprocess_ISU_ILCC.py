@@ -191,6 +191,7 @@ def clean_cell(df, zip_path, cell, subfolder):
     data_dict_rpt = convert_RPT_to_dict(zip_path, cell, subfolder)
     cycle_start = data_dict_cycle['QV_discharge']['t']
 
+    # drop the cycles after every RPT test
     for cycle_number in range(len(cycle_start)):
         current_cycle_start = data_dict_cycle['QV_discharge']['t'][cycle_number][0]
         if not data_dict_rpt['start_stop_time']['start'][i]:
