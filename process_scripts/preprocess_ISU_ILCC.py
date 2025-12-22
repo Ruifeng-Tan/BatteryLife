@@ -76,8 +76,11 @@ class ISU_ILCCPreprocessor(BasePreprocessor):
         skip_batteries_num = 0
         for cell in tqdm(valid_cells, desc='Processing ISU_ILCC cells'):
             print(f'processing cell {cell}')
+            
+            # drop the abnormal cells
             if cell == 'G42C4' or cell == 'G9C4' or cell == 'G25C4' or 'G26' in cell or 'G11' in cell:
                 continue
+            
             # Step1: judge whether to skip the processed file
             whether_to_skip = self.check_processed_file('ISU-ILCC_' + cell)
             if whether_to_skip == True:
