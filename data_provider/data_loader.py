@@ -452,7 +452,8 @@ class Dataset_original(Dataset):
             nominal_capacity = data['nominal_capacity_in_Ah']
             
         cycle_data = data['cycle_data'] # list of cycle data dict
-            
+        valid_cycle_number = len(cycle_data)
+
         total_cycle_dfs = []
         for correct_cycle_index, sub_cycle_data in enumerate(cycle_data):
             cycle_df = pd.DataFrame()
@@ -469,11 +470,12 @@ class Dataset_original(Dataset):
                 break
             
         df = pd.concat(total_cycle_dfs)
+        
         # obtain the charge and discahrge curves
         charge_discharge_curves = self.get_charge_discharge_curves(file_name, df, self.early_cycle_threshold, nominal_capacity)
         cj_aug_charge_discharge_curves, fm_aug_charge_discharge_curves  = self.aug_helper.batch_aug(charge_discharge_curves)
 
-        return df, charge_discharge_curves, eol, nominal_capacity, cj_aug_charge_discharge_curves
+        return df, charge_discharge_curves, eol, nominal_capacity, cj_aug_charge_discharge_curves, valid_cycle_number
     
         
     def read_samples_from_one_cell(self, file_name):
@@ -483,7 +485,7 @@ class Dataset_original(Dataset):
         :return: history_sohs, future_sohs, masks, cycles, prompts, charge_data, discharge_data and RPT_masks in each sample
         '''
 
-        df, charge_discharge_curves_data, eol, nominal_capacity, cj_aug_charge_discharge_curves = self.read_cell_df(file_name)
+        df, charge_discharge_curves_data, eol, nominal_capacity, cj_aug_charge_discharge_curves, valid_cycle_number = self.read_cell_df(file_name)
         if df is None or eol<=self.early_cycle_threshold:
             return None, None, None, None, None
 
@@ -501,6 +503,10 @@ class Dataset_original(Dataset):
             if i >= eol:
                 # If we encounter a battery whose cycle life is even smaller than early_cycle_threhold
                 # We should not include the eol cycle data
+                break
+
+            if i > valid_cycle_number:
+                # only effective for some CALB batteries that have only cycling data of 99 cycles available for modeling.
                 break
             
             tmp_attn_mask = np.zeros(self.early_cycle_threshold)
@@ -554,7 +560,7 @@ class Dataset_original(Dataset):
                 discharge_end_index = cutoff_voltage_indices[0][-1]
                 
                 # tmp_discharge_capacity_records = max(charge_capacity_records) - discharge_capacity_records
-                if prefix in ['RWTH', 'OX', 'ZN-coin', 'CALB_0', 'CALB_35', 'CALB_45']:
+                if prefix in ['RWTH', 'OX', 'ZN-coin', 'CALB_0', 'CALB_25', 'CALB_45']:
                     # Every cycle first discharge and then charge
                     #capacity_in_battery = np.where(charge_capacity_records==0, discharge_capacity_records, charge_capacity_records)
                     discharge_voltages = voltage_records[:discharge_end_index]
