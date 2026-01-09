@@ -68,6 +68,9 @@ class XJTUPreprocessor(BasePreprocessor):
                 cycle_data_df['cycle_number'] = cycle
                 cell_df = pd.concat([cell_df, cycle_data_df], ignore_index=True)
 
+            # split capacity columns
+            cell_df = split_capacity_column(cell_df, cycle_number_column_name='cycle_number', current_column_name='current_A', capacity_column_name='capacity_Ah', nominal_capacity=2.0)
+
             # Step3: organize the cell data
             battery = organize_cell(cell_df, cell_name, path)
             self.dump_single_file(battery)
@@ -89,8 +92,8 @@ def organize_cell(timeseries_df, name, path):
             voltage_in_V=df['voltage_V'].tolist(),
             current_in_A=df['current_A'].tolist(),
             temperature_in_C=None,
-            discharge_capacity_in_Ah=df['capacity_Ah'].tolist(),
-            charge_capacity_in_Ah=df['capacity_Ah'].tolist(),
+            discharge_capacity_in_Ah=df['discharge_cap'].tolist(),
+            charge_capacity_in_Ah=df['charge_cap'].tolist(),
             time_in_s=list(df['relative_time_min'].values * 60)
         ))
     # Charge Protocol is constant current
@@ -153,3 +156,41 @@ def get_one_cycle(data, cycle):
     cycle_data['temperature_C'] = get_value(data, cycle=cycle,variable='temperature_C')
     cycle_data['description'] = get_value(data, cycle=cycle,variable='description')
     return cycle_data
+
+def split_capacity_column(df, cycle_number_column_name, current_column_name, capacity_column_name, nominal_capacity):
+    cycle_number = list(set(df[cycle_number_column_name].values))
+    for cycle in cycle_number:
+        current_records = df.loc[df[cycle_number_column_name] == cycle, current_column_name].values
+        current_c_rate = current_records / nominal_capacity
+        capacity_records = df.loc[df[cycle_number_column_name] == cycle, capacity_column_name].values
+
+        # get start and end index for charge period
+        cutoff_indices = np.nonzero(current_c_rate >= 0.01)
+        charge_start_index = cutoff_indices[0][0]
+        charge_end_index = cutoff_indices[0][-1]
+
+        # get start and end index for discharge period
+        cutoff_indices = np.nonzero(current_c_rate <= -0.01)
+        discharge_start_index = cutoff_indices[0][0]
+        discharge_end_index = cutoff_indices[0][-1]
+
+        # get index for rest period
+        rest_indices = np.nonzero(np.abs(current_c_rate) < 0.01)
+
+        # set the charge and discharge columns
+        # format:
+        #   if in charging, the discharge columns will be set into 0.
+        #   if in discharging, the charge columns will be set into 0.
+        #   if in resting, both charge and discharge columns will be set into 0.
+        discharge_capacity_records = capacity_records.copy()
+        discharge_capacity_records[charge_start_index: charge_end_index + 1] = 0
+        discharge_capacity_records[rest_indices] = 0
+
+        charge_capacity_records = capacity_records.copy()
+        charge_capacity_records[discharge_start_index: discharge_end_index + 1] = 0
+        charge_capacity_records[rest_indices] = 0
+
+        df.loc[df[cycle_number_column_name] == cycle, 'discharge_cap'] = discharge_capacity_records
+        df.loc[df[cycle_number_column_name] == cycle, 'charge_cap'] = charge_capacity_records
+
+    return df
