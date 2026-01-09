@@ -23,10 +23,10 @@ Due to the inconsistency of charge and discharge capacity recording standards ac
 | 11    | Stanford | Charge first, then discharge     | 0-->positive number | 0-->positive number | Format 2    |
 | 12    | Tongji   | Charge first, then discharge     | 0-->positive number | 0-->positive number | Format 2    |
 | 13    | UL_PUR   | Charge first, then discharge     | 0-->positive number | 0-->positive number | Format 2    |
-| 14    | XJTU     | Charge first, then discharge     | 0-->positive number | 0-->positive number | Format 3    |
-| 15    | ZN-coin  | **Discharge first, then charge** | 0-->positive number | 0-->positive number | Format 3    |
+| 14    | XJTU     | Charge first, then discharge     | 0-->positive number | 0-->positive number | Format 2    |
+| 15    | ZN-coin  | **Discharge first, then charge** | 0-->positive number | 0-->positive number | Format 2    |
 | 16    | NA-ion   | Charge first, then discharge     | 0-->positive number | 0-->positive number | Format 2    |
-| 17    | CALB     | **Discharge first, then charge** | 0-->positive number | 0-->positive number | Format 3    |
+| 17    | CALB     | **Discharge first, then charge** | 0-->positive number | 0-->positive number | Format 2    |
 
 
 
@@ -55,18 +55,5 @@ Due to the inconsistency of charge and discharge capacity recording standards ac
   - During discharge:
     - If the `protocol type` is **charge first, then discharge**, the charge capacity will be set at 0 during discharge, and the discharge capacity starts from 0 to a positive number.
     - If the `protocol type` is **discharge first, then charge**, the discharge capacity starts from 0 to a positive number, and the charge capacity is maintained at 0.
-  - **How did we process?**
-    - We simply copy the raw data of charge and discharge capacity into our uniform data format of `charge_capacity_in_Ah` and `discharge_capacity_in_Ah` columns.
-
-
-
-- ### **Format 3**
-
-  - Due to the battery testing equipment settings, the charge and discharge capacity columns are exactly the same.
-  - **Note:** developers can split the charge and discharge capacity columns by themselves according to the charge and discharge current value.
-  - During charge:
-    - The charge capacity and the discharge capacity start from 0 to a positive number, and the charge and discharge capacity columns are the same.
-  - During discharge:
-    - The charge capacity and the discharge capacity start from 0 to a positive number, and the charge and discharge capacity columns are the same.
   - **How did we process?**
     - We simply copy the raw data of charge and discharge capacity into our uniform data format of `charge_capacity_in_Ah` and `discharge_capacity_in_Ah` columns.
