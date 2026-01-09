@@ -11,6 +11,7 @@ to ensure consistent cumulative time format across all cycles.
 Key Features:
 - Converts various time formats to cumulative seconds
 - Fixes internal time resets within cycles
+- Compresses large intra-cycle time gaps to 1 second
 - Handles nanosecond timestamps and other special formats
 - Maintains time continuity across cycles
 
@@ -120,28 +121,26 @@ def handle_special_time_formats(cycles: List, battery_id: Optional[str] = None) 
 
 def fix_internal_resets(times: List[float], battery_id: Optional[str] = None) -> Tuple[List[float], Dict]:
     """
-    Fix internal time resets within a single cycle.
+    Fix internal time resets within a single cycle and compress large time gaps.
 
     This function identifies and corrects time resets that occur within a cycle,
     which are common in step-based cycling protocols (charge->rest->discharge->rest).
-
-    For MATR dataset: Also removes abnormally large time gaps (>1000s) that may be caused
-    by power outages or manual interventions during testing.
+    It also compresses large intra-cycle time gaps to 1 second.
 
     Detection methods:
     1. Explicit reset to zero (after first element)
     2. Significant decrease (>50% drop when previous value >10s)
     3. Large backward jump (>100s backward)
-    4. Large forward gap (>1000s for MATR dataset)
+    4. Large forward gap (>5 min = 300s) - compressed to 1 second
 
     Args:
         times: List of time values from a single cycle
-        battery_id: Optional battery ID for dataset-specific handling
+        battery_id: Optional battery ID (for logging purposes)
 
     Returns:
         Tuple of (fixed_times, reset_info) where:
         - fixed_times: List with continuous time values
-        - reset_info: Dict with reset count, positions, and gaps removed
+        - reset_info: Dict with reset count, positions, gaps removed, and gap details
 
     Example:
         >>> times = [0, 100, 200, 0, 100, 200]  # Reset at index 3
@@ -149,13 +148,17 @@ def fix_internal_resets(times: List[float], battery_id: Optional[str] = None) ->
         >>> fixed
         [0, 100, 200, 200, 300, 400]
     """
-    if not times or len(times) <= 1:
-        return times, {'reset_count': 0, 'reset_positions': [], 'large_gaps_removed': 0}
+    # Threshold for large gaps: 5 minutes = 300 seconds
+    LARGE_GAP_THRESHOLD = 300
 
-    # Process time values to fix resets and remove large gaps
+    if not times or len(times) <= 1:
+        return times, {'reset_count': 0, 'reset_positions': [], 'large_gaps_removed': 0, 'large_gap_positions': []}
+
+    # Process time values to fix resets and compress large gaps
     continuous_times = []
     accumulated_time = 0.0
     reset_positions = []
+    large_gap_positions = []
     large_gaps_removed = 0
 
     # First time point
@@ -180,20 +183,23 @@ def fix_internal_resets(times: List[float], battery_id: Optional[str] = None) ->
         elif times[i] < times[i-1] - 100:
             is_reset = True
             reset_positions.append(i)
-        # Method 4: Handle abnormally large gaps for MATR dataset
-        elif battery_id and 'MATR' in battery_id and time_diff > 1000:
-            # For MATR dataset, remove gaps larger than 1000 seconds
-            # These gaps are likely due to power outages or manual interventions
+        # Method 4: Handle large intra-cycle gaps (>5 min) for ALL datasets
+        elif time_diff > LARGE_GAP_THRESHOLD:
             is_large_gap = True
             large_gaps_removed += 1
+            large_gap_positions.append({
+                'index': i,
+                'original_gap_seconds': time_diff,
+                'original_gap_minutes': time_diff / 60
+            })
 
         if is_reset:
             # Handle reset: continue from previous accumulated time
             accumulated_time = continuous_times[-1]
             continuous_times.append(accumulated_time)
         elif is_large_gap:
-            # Remove large gap, use typical sampling interval instead (5 seconds)
-            accumulated_time += 5.0
+            # Compress large gap to 1 second
+            accumulated_time += 1.0
             continuous_times.append(accumulated_time)
         else:
             # Normal time progression
@@ -203,7 +209,8 @@ def fix_internal_resets(times: List[float], battery_id: Optional[str] = None) ->
     return continuous_times, {
         'reset_count': len(reset_positions),
         'reset_positions': reset_positions,
-        'large_gaps_removed': large_gaps_removed
+        'large_gaps_removed': large_gaps_removed,
+        'large_gap_positions': large_gap_positions
     }
 
 

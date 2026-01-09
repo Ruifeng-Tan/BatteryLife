@@ -28,6 +28,7 @@ class ZNionPreprocessor(BasePreprocessor):
             process_batteries_num = 0
             skip_batteries_num = 0
             for cell in tqdm(cells, desc=f'Processing {filename} ZN-coin cells'):
+                df = pd.DataFrame()
                 capacity = 0
                 cell_name = cell.split('.')[0]
                 cell_name = cell_name.split('我的设备_')[0] + cell_name.split('我的设备_')[1]
@@ -49,13 +50,25 @@ class ZNionPreprocessor(BasePreprocessor):
                     df = pd.read_excel(path / cell, sheet_name='记录')
                     capacity_records_df = pd.read_excel(path / cell, sheet_name='循环')
                     capacity = capacity_records_df.loc[capacity_records_df['循环序号'] == 10, '放电容量/mAh'].values[0] * 0.001
-                    # capacity = 0.4 * 0.001
+
+                    # check if there have some problematic cycles
+                    try:
+                        # some batteries have problematic cycles which specific charge capacity are < 1
+                        cycles = capacity_records_df.loc[capacity_records_df['充电比容量/mAh/g'] < 1, '循环序号'].values[0] - 1
+                    except:
+                        cycles = capacity_records_df['循环序号'].max()
+
+                    df = clean_cycles(df, cycles, filename)
+
                 elif filename == 'Batch-2':
                     # Step2: get timeseries and cycle_data from files of each cell
                     capacity_records_df = pd.read_excel(path / cell, sheet_name='循环')
                     capacity = capacity_records_df.loc[capacity_records_df['循环序号'] == 10, '放电容量/mAh'].values[0] * 0.001
                     df1 = pd.read_excel(path / cell, sheet_name='记录')
+
+                    # check if there have some problematic cycles
                     try:
+                        # some batteries have problematic cycles which specific charge capacity are < 1
                         cycles = capacity_records_df.loc[capacity_records_df['充电比容量/mAh/g'] < 1, '循环序号'].values[0] - 1
                     except:
                         cycles = capacity_records_df['循环序号'].max()
@@ -65,7 +78,7 @@ class ZNionPreprocessor(BasePreprocessor):
                     except:
                         df = df1
 
-                    df = clean_Batch2(df, cycles)
+                    df = clean_cycles(df, cycles, filename)
 
                 elif filename == 'Batch-3':
                     capacity_records_df = pd.read_excel(path / cell, sheet_name='Cycle')
@@ -80,10 +93,21 @@ class ZNionPreprocessor(BasePreprocessor):
                             total_df = pd.concat([total_df, df], ignore_index=True)
 
                     df = total_df
-                    df = df[df['Cycle'] > 9]
 
-                # clean data
-                df = reset_cell(df, filename)
+                    # check if there have some problematic cycles
+                    try:
+                        # some batteries have problematic cycles which specific charge capacity are < 1
+                        cycles = \
+                        capacity_records_df.loc[capacity_records_df['CoulombEfficiency/%'] < 1, 'Cycle'].values[0] - 1
+                    except:
+                        cycles = capacity_records_df['Cycle'].max()
+
+                    df = clean_cycles(df, cycles, filename)
+
+                # reset the cycle number and unify the capacity data
+                df = reset_cell(df, filename, capacity)
+
+
 
                 battery = organize_cell(df, cell_name, capacity, filename)
                 self.dump_single_file(battery)
@@ -99,37 +123,37 @@ def organize_cell(timeseries_df, name, C, filename):
         timeseries_df = timeseries_df.sort_values('测试时间')
     elif filename == 'Batch-2':
         timeseries_df = timeseries_df.sort_values('系统时间')
-    elif filename == 'Batch-3':
-        timeseries_df = timeseries_df.sort_values('TestTime')
 
     cycle_data = []
     if filename == 'Batch-3':
         for cycle_index, df in timeseries_df.groupby('Cycle'):
-            time_in_s = convert_to_s(list(df['TestTime'].values))
+            time_in_s = convert_to_s(list(df['TestTime'].values), cycle_index)
             current = df['Current/mA'] / 1000
-            capacity = df['Capacity/mAh'] / 1000
+            charge_capacity = df['charge_cap'] / 1000
+            discharge_capacity = df['discharge_cap'] / 1000
             cycle_data.append(CycleData(
                 cycle_number=int(cycle_index),
                 voltage_in_V=df['Voltage/V'].tolist(),
                 current_in_A=current.tolist(),
                 temperature_in_C=None,
-                discharge_capacity_in_Ah=capacity.tolist(),
-                charge_capacity_in_Ah=capacity.tolist(),
+                discharge_capacity_in_Ah=discharge_capacity.tolist(),
+                charge_capacity_in_Ah=charge_capacity.tolist(),
                 time_in_s=time_in_s
             ))
     else:
         for cycle_index, df in timeseries_df.groupby('循环序号'):
             current = df['电流/mA'] / 1000
-            capacity = df['容量/mAh'] / 1000
+            charge_capacity = df['charge_cap'] / 1000
+            discharge_capacity = df['discharge_cap'] / 1000
             if filename == 'Batch-1':
-                time_in_s = convert_to_s(list(df['测试时间'].values))
+                time_in_s = convert_to_s(list(df['测试时间'].values), cycle_index)
                 cycle_data.append(CycleData(
                     cycle_number=int(cycle_index),
                     voltage_in_V=df['电压/V'].tolist(),
                     current_in_A=current.tolist(),
                     temperature_in_C=None,
-                    discharge_capacity_in_Ah=capacity.tolist(),
-                    charge_capacity_in_Ah=capacity.tolist(),
+                    discharge_capacity_in_Ah=discharge_capacity.tolist(),
+                    charge_capacity_in_Ah=charge_capacity.tolist(),
                     time_in_s=time_in_s
                 ))
             elif filename == 'Batch-2':
@@ -144,8 +168,8 @@ def organize_cell(timeseries_df, name, C, filename):
                     voltage_in_V=df['电压/V'].tolist(),
                     current_in_A=current.tolist(),
                     temperature_in_C=None,
-                    discharge_capacity_in_Ah=capacity.tolist(),
-                    charge_capacity_in_Ah=capacity.tolist(),
+                    discharge_capacity_in_Ah=discharge_capacity.tolist(),
+                    charge_capacity_in_Ah=charge_capacity.tolist(),
                     time_in_s=time_in_s
                 ))
     # Charge Protocol is constant current
@@ -175,24 +199,116 @@ def organize_cell(timeseries_df, name, C, filename):
         SOC_interval=soc_interval
     )
 
-def reset_cell(df, batch_name):
+def reset_cell(df, batch_name, capacity):
     if batch_name == 'Batch-3':
         cycles = df['Cycle']
         cycle_number = set([index for index in cycles.tolist() if index != 0])
         for current_index, new_index in zip(cycle_number, range(1, len(cycle_number) + 1)):
+            # reset the cycle number
             df.loc[df['Cycle'] == current_index, 'Cycle'] = new_index
+
+            current_records = df.loc[df['Cycle'] == new_index, 'Current/mA'].values
+            current_c_rate = current_records / capacity
+            capacity_records = df.loc[df['Cycle'] == new_index, 'Capacity/mAh'].values
+
+            # get start and end index for charge period
+            cutoff_indices = np.nonzero(current_c_rate >= 0.01)
+            charge_start_index = cutoff_indices[0][0]
+            charge_end_index = cutoff_indices[0][-1]
+
+            # get start and end index for discharge period
+            cutoff_indices = np.nonzero(current_c_rate <= -0.01)
+            discharge_start_index = cutoff_indices[0][0]
+            discharge_end_index = cutoff_indices[0][-1]
+
+            # get index for rest period
+            rest_indices = np.nonzero(np.abs(current_c_rate) < 0.01)
+
+            # set the charge and discharge columns
+            # format:
+            #   if in charging, the discharge columns will be set into 0.
+            #   if in discharging, the charge columns will be set into 0.
+            #   if in resting, both charge and discharge columns will be set into 0.
+            discharge_capacity_records = capacity_records.copy()
+            discharge_capacity_records[charge_start_index: charge_end_index + 1] = 0
+            discharge_capacity_records[rest_indices] = 0
+
+            charge_capacity_records = capacity_records.copy()
+            charge_capacity_records[discharge_start_index: discharge_end_index + 1] = 0
+            charge_capacity_records[rest_indices] = 0
+
+            df.loc[df['Cycle'] == new_index, 'discharge_cap'] = discharge_capacity_records
+            df.loc[df['Cycle'] == new_index, 'charge_cap'] = charge_capacity_records
     else:
         cycles = df['循环序号']
         cycle_number = set([index for index in cycles.tolist() if index != 0])
         for current_index, new_index in zip(cycle_number, range(1, len(cycle_number) + 1)):
+            # reset the cycle number
             df.loc[df['循环序号'] == current_index, '循环序号'] = new_index
+
+            current_records = df.loc[df['循环序号'] == new_index, '电流/mA'].values
+            current_c_rate = current_records / capacity
+            capacity_records = df.loc[df['循环序号'] == new_index, '容量/mAh'].values
+
+            # get start and end index for charge period
+            cutoff_indices = np.nonzero(current_c_rate > 0.01)
+            charge_start_index = cutoff_indices[0][0]
+            charge_end_index = cutoff_indices[0][-1]
+
+            # get start and end index for discharge period
+            cutoff_indices = np.nonzero(current_c_rate < -0.01)
+            discharge_start_index = cutoff_indices[0][0]
+            discharge_end_index = cutoff_indices[0][-1]
+
+            # get start and end index for discharge period
+            rest_indices = np.nonzero(np.abs(current_c_rate) < 0.01)
+
+            # set the charge and discharge columns
+            # format:
+            #   if in charging, the discharge columns will be set into 0.
+            #   if in discharging, the charge columns will be set into 0.
+            #   if in resting, both charge and discharge columns will be set into 0.
+            discharge_capacity_records = capacity_records.copy()
+            discharge_capacity_records[charge_start_index: charge_end_index + 1] = 0
+            discharge_capacity_records[rest_indices] = 0
+
+            charge_capacity_records = capacity_records.copy()
+            charge_capacity_records[discharge_start_index: discharge_end_index + 1] = 0
+            charge_capacity_records[rest_indices] = 0
+
+            df.loc[df['循环序号'] == new_index, 'discharge_cap'] = discharge_capacity_records
+            df.loc[df['循环序号'] == new_index, 'charge_cap'] = charge_capacity_records
+
     return df
 
-def clean_Batch2(df, cycles):
-    df = df[df['循环序号'] <= cycles]
+def clean_cycles(df, cycles, filename):
+    if filename == 'Batch-3':
+        # drop probelmatic cycles
+        df = df[df['Cycle'] <= cycles]
+
+        # drop formation cycles
+        df = df[df['Cycle'] > 9]
+    else:
+        # drop probelmatic cycles
+        df = df[df['循环序号'] <= cycles]
+
+        # drop formation cycles
+        df = df[df['循环序号'] > 9]
+
     return df
 
-def convert_to_s(time_list):
+def drop_abnormal_cycles(df, cell_name):
+    if cell_name == 'ZN-coin_451-1_20240116203425_03_4_Batch-3':
+        cycles = df['Cycle']
+        cycle_number = set([index for index in cycles.tolist() if index != 0])
+        for cycle in cycle_number:
+            cycle_df = df[df['Cycle'] == cycle]
+            voltage = cycle_df['Voltage/V'].values
+            if cycle == 29:
+                print(cycle_df)
+
+
+def convert_to_s(time_list, cycle_index):
     time_in_s = []
     for time in time_list:
         h = float(str(time).split(':')[0])
