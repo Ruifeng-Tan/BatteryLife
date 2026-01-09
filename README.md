@@ -98,6 +98,14 @@ python preprocess_scripts.py
 
 If you download the processed datasets, you can skip this step.
 
+- **We sincerely suggest that all researchers conduct a double-check on the processed data after completing the data processing.**
+
+  To facilitate the quick verification and processing of the data by all researchers, we have provided some Jupyter scripts for the double-check of processed data in the `./check_data_scripts/` folder.
+
+  - `check_capacity_curves.ipynb` : for checking charge and discharge capacities curve of the batteries..
+  - `check_soh_curves.ipynb` : for checking the degradation trajectory of the batteries.
+  - `check_voltage_current_curves.ipynb` : for checking the voltage and current curves of the batteries.
+
 ### Train the model [[tutorial](./assets/Model_training.md)]
 
 Before you start training, please move all **processed datasets (such as, HUST, MATR, et al.)** folders and **Life labels** folder (downloaded from Hugginface or Zenodo websites) into `./dataset` folder under the root folder.
