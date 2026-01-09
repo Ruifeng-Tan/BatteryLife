@@ -98,9 +98,7 @@ python preprocess_scripts.py
 
 If you download the processed datasets, you can skip this step.
 
-- **We sincerely suggest that all researchers conduct a double-check on the processed data after completing the data processing.**
-
-  To facilitate the quick verification and processing of the data by all researchers, we have provided some Jupyter scripts for the double-check of processed data in the `./check_data_scripts/` folder.
+- During the development of BatteryLife, we frequently encountered problems where the processed data still contained potential issues after processing. Consequently, according to our experience, we have provided some Jupyter scripts for the double-check of processed data in the `./check_data_scripts/` folder to help the quick verification and processing of the data for the community. By conducting quick checks to ensure that all characteristic curves align with expectations, potential downstream complications can be effectively mitigated.
 
   - `check_capacity_curves.ipynb` : for checking charge and discharge capacities curve of the batteries..
   - `check_soh_curves.ipynb` : for checking the degradation trajectory of the batteries.
@@ -160,6 +158,7 @@ To further broaden the range of available resources, we list below several open-
 | 3     | 2025         | [Aging matrix visualizes complexity of battery aging across hundreds of cycling protocols](https://data.matr.io/11/) | Energy & Environmental Science |                    |
 | 4     | 2025         | [Degradation path prediction of lithium-ion batteries under dynamic operating sequences](https://data.mendeley.com/datasets/h2y7mj4kt7/2) | Energy & Environmental Science |                    |
 | 5     | 2025         | [Non-destructive degradation pattern decoupling for early battery trajectory prediction via physics-informed learning](https://zenodo.org/records/10715209) | Energy & Environmental Science |                    |
+| 6     | 2026         | [Transfer from lithium to sodium: promoting battery lifetime prognosis application](https://pubs.rsc.org/en/content/articlehtml/2025/eb/d5eb00215j) | EES Batteries |                    |
 
 If you are interested in contributing, please either submit a pull request or contact us via email at rtan474@connect.hkust-gz.edu.cn and whong719@connect.hkust-gz.edu.cn. To integrate your data into the BatteryLife repositories, please provide:
 
