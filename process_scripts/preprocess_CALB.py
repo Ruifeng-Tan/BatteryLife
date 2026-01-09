@@ -42,6 +42,9 @@ class CALBPreprocessor(BasePreprocessor):
                 if (files_path == '25度') or (files_path == '35度') or ('B254' in file) or ('B256' in file):
                     df = df[df['循环号'] > 1]
 
+                # split capacity columns
+                df = split_capacity_column(df, cycle_number_column_name='循环号', current_column_name='电流(A)', capacity_column_name='容量(Ah)', nominal_capacity=58)
+
                 # organize data
                 battery = organize_cell(df, cell_name, 58, files_path)
                 self.dump_single_file(battery)
@@ -161,3 +164,41 @@ def organize_cell(timeseries_df, name, C, temperature):
         max_voltage_limit_in_V=upper_cutoff_voltage,
         SOC_interval=soc_interval
     )
+
+def split_capacity_column(df, cycle_number_column_name, current_column_name, capacity_column_name, nominal_capacity):
+    cycle_number = list(set(df[cycle_number_column_name].values))
+    for cycle in cycle_number:
+        current_records = df.loc[df[cycle_number_column_name] == cycle, current_column_name].values
+        current_c_rate = current_records / nominal_capacity
+        capacity_records = df.loc[df[cycle_number_column_name] == cycle, capacity_column_name].values
+
+        # get start and end index for charge period
+        cutoff_indices = np.nonzero(current_c_rate >= 0.01)
+        charge_start_index = cutoff_indices[0][0]
+        charge_end_index = cutoff_indices[0][-1]
+
+        # get start and end index for discharge period
+        cutoff_indices = np.nonzero(current_c_rate <= -0.01)
+        discharge_start_index = cutoff_indices[0][0]
+        discharge_end_index = cutoff_indices[0][-1]
+
+        # get index for rest period
+        rest_indices = np.nonzero(np.abs(current_c_rate) < 0.01)
+
+        # set the charge and discharge columns
+        # format:
+        #   if in charging, the discharge columns will be set into 0.
+        #   if in discharging, the charge columns will be set into 0.
+        #   if in resting, both charge and discharge columns will be set into 0.
+        discharge_capacity_records = capacity_records.copy()
+        discharge_capacity_records[charge_start_index: charge_end_index + 1] = 0
+        discharge_capacity_records[rest_indices] = 0
+
+        charge_capacity_records = capacity_records.copy()
+        charge_capacity_records[discharge_start_index: discharge_end_index + 1] = 0
+        charge_capacity_records[rest_indices] = 0
+
+        df.loc[df[cycle_number_column_name] == cycle, 'discharge_cap'] = discharge_capacity_records
+        df.loc[df[cycle_number_column_name] == cycle, 'charge_cap'] = charge_capacity_records
+
+    return df
