@@ -174,7 +174,11 @@ def split_capacity_column(df, cycle_number_column_name, current_column_name, cap
 
         # get start and end index for charge period
         cutoff_indices = np.nonzero(current_c_rate >= 0.01)
-        charge_start_index = cutoff_indices[0][0]
+        try:
+            charge_start_index = cutoff_indices[0][0]
+        except:
+            # some cycles of some batteries are incomplete
+            continue
         charge_end_index = cutoff_indices[0][-1]
 
         # get start and end index for discharge period
