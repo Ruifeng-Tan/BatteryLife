@@ -119,7 +119,7 @@ class RWTHPreprocessor(BasePreprocessor):
                 form_factor='cylindrical_18650',
                 anode_material='graphite',
                 cathode_material='NMC',
-                nominal_capacity_in_Ah=1.11,  # 1.85
+                nominal_capacity_in_Ah=1.85,  # 1.85
                 charge_protocol=[
                     CyclingProtocol(
                         current_in_A=4.0,
