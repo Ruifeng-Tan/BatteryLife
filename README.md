@@ -104,6 +104,11 @@ If you download the processed datasets, you can skip this step.
   - `check_soh_curves.ipynb` : for checking the degradation trajectory of the batteries.
   - `check_voltage_current_curves.ipynb` : for checking the voltage and current curves of the batteries.
 
+How to calculate the statistical information of aging conditions for processed data:
+
+- Firstly, run the `domainAdaptation.py` script to generate the `name2agingConditionID.json`, which the aging condition number for each battery.
+- Secondly, run the `dataset_overview_calculation.py` script to calculate the aging conditions statistical information for preprocessed data.
+
 ### Train the model [[tutorial](./assets/Model_training.md)]
 
 Before you start training, please move all **processed datasets (such as, HUST, MATR, et al.)** folders and **Life labels** folder (downloaded from Hugginface or Zenodo websites) into `./dataset` folder under the root folder.
