@@ -251,61 +251,56 @@ XJTU_train_files = ['XJTU_2C_battery-6.pkl', 'XJTU_2C_battery-2.pkl', 'XJTU_3C_b
 XJTU_val_files = ['XJTU_3C_battery-14.pkl', 'XJTU_3C_battery-8.pkl', 'XJTU_2C_battery-3.pkl', 'XJTU_2C_battery-7.pkl']
 XJTU_test_files = ['XJTU_3C_battery-12.pkl', 'XJTU_3C_battery-1.pkl', 'XJTU_2C_battery-5.pkl', 'XJTU_3C_battery-9.pkl']
 
-# ZNcoin_train_files = ['ZN-coin_202_20231213213655_03_3.pkl', 'ZN-coin_202_20231213213655_03_4.pkl',
-#                       'ZN-coin_202_20231213213655_03_5.pkl', 'ZN-coin_204-1_20231205230212_07_1.pkl',
-#                       'ZN-coin_204-3_20231205230221_07_3.pkl', 'ZN-coin_205-2_20231205230234_07_5.pkl',
-#                       'ZN-coin_402-2_20231209225727_01_2.pkl', 'ZN-coin_403-1_20231209225922_01_4.pkl',
-#                       'ZN-coin_404-3_20231209231250_08_1.pkl', 'ZN-coin_405-1_20231209231331_08_2.pkl',
-#                       'ZN-coin_405-2_20231209231413_08_3.pkl', 'ZN-coin_405-3_20231209231450_08_4.pkl',
-#                       'ZN-coin_407-1_20231209231725_08_8.pkl', 'ZN-coin_407-3_20231209231841_02_2.pkl',
-#                       'ZN-coin_408-1_20231209231918_02_3.pkl', 'ZN-coin_408-2_20231209231947_02_4.pkl',
-#                       'ZN-coin_408-3_20231209232028_05_1.pkl', 'ZN-coin_409-1_20231209232338_05_2.pkl',
-#                       'ZN-coin_409-2_20231209232422_05_3.pkl', 'ZN-coin_409-3_20231209232500_05_4.pkl',
-#                       'ZN-coin_410-1_20231209232559_09_1.pkl', 'ZN-coin_410-3_20231209232707_09_3.pkl',
-#                       'ZN-coin_412-3_20231209233120_06_1.pkl', 'ZN-coin_414-2_20231209233354_06_6.pkl',
-#                       'ZN-coin_415-2_20231209233606_10_1.pkl', 'ZN-coin_416-3_20231209233856_10_5.pkl',
-#                       'ZN-coin_417-3_20231209234058_10_8.pkl', 'ZN-coin_418-1_20231209234141_11_1.pkl',
-#                       'ZN-coin_418-3_20231209234252_11_3.pkl', 'ZN-coin_420-3_20231205230017_01_3.pkl',
-#                       'ZN-coin_422-3_20231205230049_02_1.pkl', 'ZN-coin_423-1_20231205230055_02_2.pkl',
-#                       'ZN-coin_425-2_20231205230124_03_1.pkl', 'ZN-coin_428-1_20231212185048_01_2.pkl',
-#                       'ZN-coin_429-2_20231212185157_01_8.pkl', 'ZN-coin_430-1_20231212185250_02_6.pkl',
-#                       'ZN-coin_432-2_20231227204437_01_2.pkl', 'ZN-coin_433-1_20231227204534_01_4.pkl',
-#                       'ZN-coin_433-2_20231227204539_01_5.pkl', 'ZN-coin_434-1_20231227204606_01_7.pkl',
-#                       'ZN-coin_434-2_20231227204612_01_8.pkl', 'ZN-coin_434-3_20231227204618_03_1.pkl',
-#                       'ZN-coin_435-2_20231227204630_03_3.pkl', 'ZN-coin_435-3_20231227204635_03_4.pkl',
-#                       'ZN-coin_436-3_20231227204657_03_7.pkl', 'ZN-coin_437-1_20231227204706_03_8.pkl',
-#                       'ZN-coin_437-3_20231227204717_04_2.pkl', 'ZN-coin_438-1_20231227204743_04_3.pkl',
-#                       'ZN-coin_438-2_20231227204748_04_4.pkl', 'ZN-coin_439-2_20231227204810_04_7.pkl',
-#                       'ZN-coin_439-3_20231227204817_04_8.pkl', 'ZN-coin_440-2_20231227204832_08_2.pkl',
-#                       'ZN-coin_442-1_20240104212418_09_1.pkl', 'ZN-coin_442-3_20240104212433_09_3.pkl',
-#                       'ZN-coin_443-2_20240104212500_09_5.pkl', 'ZN-coin_445-1_20240104212517_09_7.pkl',
-#                       'ZN-coin_450-1_20240116203402_01_2_Batch-3.pkl', 'ZN-coin_450-2_20240116203410_01_4_Batch-3.pkl',
-#                       'ZN-coin_450-3_20240116203417_03_3_Batch-3.pkl', 'ZN-coin_451-1_20240116203425_03_4_Batch-3.pkl']
-# ZNcoin_val_files = ['ZN-coin_442-2_20240104212424_09_2.pkl', 'ZN-coin_420-1_20231205230010_01_1.pkl',
-#                     'ZN-coin_209-2_20231205230252_07_8.pkl', 'ZN-coin_441-1_20231227204855_08_4.pkl',
-#                     'ZN-coin_437-2_20231227204712_04_1.pkl', 'ZN-coin_406-1_20231209231531_08_5.pkl',
-#                     'ZN-coin_411-1_20231209232756_09_4.pkl', 'ZN-coin_436-1_20231227204646_03_5.pkl',
-#                     'ZN-coin_418-2_20231209234209_11_2.pkl', 'ZN-coin_440-3_20231227204837_08_3.pkl',
-#                     'ZN-coin_429-1_20231212185129_01_5.pkl', 'ZN-coin_432-3_20231227204518_01_3.pkl',
-#                     'ZN-coin_433-3_20231227204544_01_6.pkl', 'ZN-coin_445-2_20240104212521_09_8.pkl',
-#                     'ZN-coin_414-3_20231209233430_06_7.pkl', 'ZN-coin_416-2_20231209233822_10_4.pkl',
-#                     'ZN-coin_445-3_20240104212530_07_1.pkl', 'ZN-coin_440-1_20231227204827_08_1.pkl',
-#                     'ZN-coin_415-3_20231209233637_10_2.pkl', 'ZN-coin_402-1_20231209225636_01_1.pkl']
-# ZNcoin_test_files = ['ZN-coin_422-1_20231205230039_01_7.pkl', 'ZN-coin_438-3_20231227204754_04_5.pkl',
-#                      'ZN-coin_435-1_20231227204625_03_2.pkl', 'ZN-coin_412-2_20231209233028_09_8.pkl',
-#                      'ZN-coin_410-2_20231209232626_09_2.pkl', 'ZN-coin_439-1_20231227204804_04_6.pkl',
-#                      'ZN-coin_204-2_20231205230217_07_2.pkl', 'ZN-coin_428-2_20231212185058_01_4.pkl',
-#                      'ZN-coin_430-2_20231212185305_02_7.pkl', 'ZN-coin_436-2_20231227204653_03_6.pkl',
-#                      'ZN-coin_205-3_20231205230239_07_6.pkl', 'ZN-coin_415-1_20231209233508_06_8.pkl',
-#                      'ZN-coin_412-1_20231209232958_09_7.pkl', 'ZN-coin_413-1_20231209233202_06_2.pkl',
-#                      'ZN-coin_209-1_20231205230248_07_7.pkl', 'ZN-coin_406-2_20231209231604_08_6.pkl',
-#                      'ZN-coin_406-3_20231209231637_08_7.pkl', 'ZN-coin_205-1_20231205230230_07_4.pkl',
-#                      'ZN-coin_446-1_20240104212538_07_2.pkl', 'ZN-coin_402-3_20231209225844_01_3.pkl']
-
-ZNcoin_train_files = ['ZN-coin_202_20231213213655_03_3.pkl', 'ZN-coin_202_20231213213655_03_4.pkl', 'ZN-coin_202_20231213213655_03_5.pkl', 'ZN-coin_204-1_20231205230212_07_1.pkl', 'ZN-coin_204-3_20231205230221_07_3.pkl', 'ZN-coin_205-2_20231205230234_07_5.pkl', 'ZN-coin_402-2_20231209225727_01_2.pkl', 'ZN-coin_403-1_20231209225922_01_4.pkl', 'ZN-coin_404-3_20231209231250_08_1.pkl', 'ZN-coin_405-1_20231209231331_08_2.pkl', 'ZN-coin_405-2_20231209231413_08_3.pkl', 'ZN-coin_405-3_20231209231450_08_4.pkl', 'ZN-coin_407-1_20231209231725_08_8.pkl', 'ZN-coin_407-3_20231209231841_02_2.pkl', 'ZN-coin_408-1_20231209231918_02_3.pkl', 'ZN-coin_408-2_20231209231947_02_4.pkl', 'ZN-coin_408-3_20231209232028_05_1.pkl', 'ZN-coin_409-1_20231209232338_05_2.pkl', 'ZN-coin_409-2_20231209232422_05_3.pkl', 'ZN-coin_409-3_20231209232500_05_4.pkl', 'ZN-coin_410-1_20231209232559_09_1.pkl', 'ZN-coin_410-3_20231209232707_09_3.pkl', 'ZN-coin_412-3_20231209233120_06_1.pkl', 'ZN-coin_414-2_20231209233354_06_6.pkl', 'ZN-coin_415-2_20231209233606_10_1.pkl', 'ZN-coin_416-3_20231209233856_10_5.pkl', 'ZN-coin_417-3_20231209234058_10_8.pkl', 'ZN-coin_418-1_20231209234141_11_1.pkl', 'ZN-coin_418-3_20231209234252_11_3.pkl', 'ZN-coin_420-3_20231205230017_01_3.pkl', 'ZN-coin_422-3_20231205230049_02_1.pkl', 'ZN-coin_423-1_20231205230055_02_2.pkl', 'ZN-coin_425-2_20231205230124_03_1.pkl', 'ZN-coin_428-1_20231212185048_01_2.pkl', 'ZN-coin_429-2_20231212185157_01_8.pkl', 'ZN-coin_430-1_20231212185250_02_6.pkl', 'ZN-coin_432-2_20231227204437_01_2.pkl', 'ZN-coin_433-1_20231227204534_01_4.pkl', 'ZN-coin_433-2_20231227204539_01_5.pkl', 'ZN-coin_434-1_20231227204606_01_7.pkl', 'ZN-coin_434-2_20231227204612_01_8.pkl', 'ZN-coin_434-3_20231227204618_03_1.pkl', 'ZN-coin_435-2_20231227204630_03_3.pkl', 'ZN-coin_435-3_20231227204635_03_4.pkl', 'ZN-coin_436-3_20231227204657_03_7.pkl', 'ZN-coin_437-1_20231227204706_03_8.pkl', 'ZN-coin_437-3_20231227204717_04_2.pkl', 'ZN-coin_438-1_20231227204743_04_3.pkl', 'ZN-coin_438-2_20231227204748_04_4.pkl', 'ZN-coin_439-2_20231227204810_04_7.pkl', 'ZN-coin_439-3_20231227204817_04_8.pkl', 'ZN-coin_440-2_20231227204832_08_2.pkl', 'ZN-coin_442-1_20240104212418_09_1.pkl', 'ZN-coin_442-3_20240104212433_09_3.pkl', 'ZN-coin_443-2_20240104212500_09_5.pkl', 'ZN-coin_445-1_20240104212517_09_7.pkl', 'ZN-coin_450-1_20240116203402_01_2_Batch-3.pkl', 'ZN-coin_450-2_20240116203410_01_4_Batch-3.pkl', 'ZN-coin_450-3_20240116203417_03_3_Batch-3.pkl', 'ZN-coin_451-1_20240116203425_03_4_Batch-3.pkl']
-ZNcoin_val_files = ['ZN-coin_442-2_20240104212424_09_2.pkl', 'ZN-coin_420-1_20231205230010_01_1.pkl', 'ZN-coin_209-2_20231205230252_07_8.pkl', 'ZN-coin_441-1_20231227204855_08_4.pkl', 'ZN-coin_437-2_20231227204712_04_1.pkl', 'ZN-coin_406-1_20231209231531_08_5.pkl', 'ZN-coin_411-1_20231209232756_09_4.pkl', 'ZN-coin_436-1_20231227204646_03_5.pkl', 'ZN-coin_418-2_20231209234209_11_2.pkl', 'ZN-coin_440-3_20231227204837_08_3.pkl', 'ZN-coin_429-1_20231212185129_01_5.pkl', 'ZN-coin_432-3_20231227204518_01_3.pkl', 'ZN-coin_433-3_20231227204544_01_6.pkl', 'ZN-coin_445-2_20240104212521_09_8.pkl', 'ZN-coin_414-3_20231209233430_06_7.pkl', 'ZN-coin_416-2_20231209233822_10_4.pkl', 'ZN-coin_445-3_20240104212530_07_1.pkl', 'ZN-coin_440-1_20231227204827_08_1.pkl', 'ZN-coin_415-3_20231209233637_10_2.pkl', 'ZN-coin_402-1_20231209225636_01_1.pkl']
-ZNcoin_test_files = ['ZN-coin_422-1_20231205230039_01_7.pkl', 'ZN-coin_438-3_20231227204754_04_5.pkl', 'ZN-coin_435-1_20231227204625_03_2.pkl', 'ZN-coin_412-2_20231209233028_09_8.pkl', 'ZN-coin_410-2_20231209232626_09_2.pkl', 'ZN-coin_439-1_20231227204804_04_6.pkl', 'ZN-coin_204-2_20231205230217_07_2.pkl', 'ZN-coin_428-2_20231212185058_01_4.pkl', 'ZN-coin_430-2_20231212185305_02_7.pkl', 'ZN-coin_436-2_20231227204653_03_6.pkl', 'ZN-coin_205-3_20231205230239_07_6.pkl', 'ZN-coin_415-1_20231209233508_06_8.pkl', 'ZN-coin_412-1_20231209232958_09_7.pkl', 'ZN-coin_413-1_20231209233202_06_2.pkl', 'ZN-coin_209-1_20231205230248_07_7.pkl', 'ZN-coin_406-2_20231209231604_08_6.pkl', 'ZN-coin_406-3_20231209231637_08_7.pkl', 'ZN-coin_205-1_20231205230230_07_4.pkl', 'ZN-coin_446-1_20240104212538_07_2.pkl', 'ZN-coin_402-3_20231209225844_01_3.pkl']
-
+ZNcoin_train_files = ['ZN-coin_202_20231213213655_03_3.pkl', 'ZN-coin_202_20231213213655_03_4.pkl',
+                      'ZN-coin_202_20231213213655_03_5.pkl', 'ZN-coin_204-1_20231205230212_07_1.pkl',
+                      'ZN-coin_204-3_20231205230221_07_3.pkl', 'ZN-coin_205-2_20231205230234_07_5.pkl',
+                      'ZN-coin_402-2_20231209225727_01_2.pkl', 'ZN-coin_403-1_20231209225922_01_4.pkl',
+                      'ZN-coin_404-3_20231209231250_08_1.pkl', 'ZN-coin_405-1_20231209231331_08_2.pkl',
+                      'ZN-coin_405-2_20231209231413_08_3.pkl', 'ZN-coin_405-3_20231209231450_08_4.pkl',
+                      'ZN-coin_407-1_20231209231725_08_8.pkl', 'ZN-coin_407-3_20231209231841_02_2.pkl',
+                      'ZN-coin_408-1_20231209231918_02_3.pkl', 'ZN-coin_408-2_20231209231947_02_4.pkl',
+                      'ZN-coin_408-3_20231209232028_05_1.pkl', 'ZN-coin_409-1_20231209232338_05_2.pkl',
+                      'ZN-coin_409-2_20231209232422_05_3.pkl', 'ZN-coin_409-3_20231209232500_05_4.pkl',
+                      'ZN-coin_410-1_20231209232559_09_1.pkl', 'ZN-coin_410-3_20231209232707_09_3.pkl',
+                      'ZN-coin_412-3_20231209233120_06_1.pkl', 'ZN-coin_414-2_20231209233354_06_6.pkl',
+                      'ZN-coin_415-2_20231209233606_10_1.pkl', 'ZN-coin_416-3_20231209233856_10_5.pkl',
+                      'ZN-coin_417-3_20231209234058_10_8.pkl', 'ZN-coin_418-1_20231209234141_11_1.pkl',
+                      'ZN-coin_418-3_20231209234252_11_3.pkl', 'ZN-coin_420-3_20231205230017_01_3.pkl',
+                      'ZN-coin_422-3_20231205230049_02_1.pkl', 'ZN-coin_423-1_20231205230055_02_2.pkl',
+                      'ZN-coin_425-2_20231205230124_03_1.pkl', 'ZN-coin_428-1_20231212185048_01_2.pkl',
+                      'ZN-coin_429-2_20231212185157_01_8.pkl', 'ZN-coin_430-1_20231212185250_02_6.pkl',
+                      'ZN-coin_432-2_20231227204437_01_2.pkl', 'ZN-coin_433-1_20231227204534_01_4.pkl',
+                      'ZN-coin_433-2_20231227204539_01_5.pkl', 'ZN-coin_434-1_20231227204606_01_7.pkl',
+                      'ZN-coin_434-2_20231227204612_01_8.pkl', 'ZN-coin_434-3_20231227204618_03_1.pkl',
+                      'ZN-coin_435-2_20231227204630_03_3.pkl', 'ZN-coin_435-3_20231227204635_03_4.pkl',
+                      'ZN-coin_436-3_20231227204657_03_7.pkl', 'ZN-coin_437-1_20231227204706_03_8.pkl',
+                      'ZN-coin_437-3_20231227204717_04_2.pkl', 'ZN-coin_438-1_20231227204743_04_3.pkl',
+                      'ZN-coin_438-2_20231227204748_04_4.pkl', 'ZN-coin_439-2_20231227204810_04_7.pkl',
+                      'ZN-coin_439-3_20231227204817_04_8.pkl', 'ZN-coin_440-2_20231227204832_08_2.pkl',
+                      'ZN-coin_442-1_20240104212418_09_1.pkl', 'ZN-coin_442-3_20240104212433_09_3.pkl',
+                      'ZN-coin_443-2_20240104212500_09_5.pkl', 'ZN-coin_445-1_20240104212517_09_7.pkl',
+                      'ZN-coin_450-1_20240116203402_01_2_Batch-3.pkl', 'ZN-coin_450-2_20240116203410_01_4_Batch-3.pkl',
+                      'ZN-coin_450-3_20240116203417_03_3_Batch-3.pkl', 'ZN-coin_451-1_20240116203425_03_4_Batch-3.pkl']
+ZNcoin_val_files = ['ZN-coin_442-2_20240104212424_09_2.pkl', 'ZN-coin_420-1_20231205230010_01_1.pkl',
+                    'ZN-coin_209-2_20231205230252_07_8.pkl', 'ZN-coin_441-1_20231227204855_08_4.pkl',
+                    'ZN-coin_437-2_20231227204712_04_1.pkl', 'ZN-coin_406-1_20231209231531_08_5.pkl',
+                    'ZN-coin_411-1_20231209232756_09_4.pkl', 'ZN-coin_436-1_20231227204646_03_5.pkl',
+                    'ZN-coin_418-2_20231209234209_11_2.pkl', 'ZN-coin_440-3_20231227204837_08_3.pkl',
+                    'ZN-coin_429-1_20231212185129_01_5.pkl', 'ZN-coin_432-3_20231227204518_01_3.pkl',
+                    'ZN-coin_433-3_20231227204544_01_6.pkl', 'ZN-coin_445-2_20240104212521_09_8.pkl',
+                    'ZN-coin_414-3_20231209233430_06_7.pkl', 'ZN-coin_416-2_20231209233822_10_4.pkl',
+                    'ZN-coin_445-3_20240104212530_07_1.pkl', 'ZN-coin_440-1_20231227204827_08_1.pkl',
+                    'ZN-coin_415-3_20231209233637_10_2.pkl', 'ZN-coin_402-1_20231209225636_01_1.pkl']
+ZNcoin_test_files = ['ZN-coin_422-1_20231205230039_01_7.pkl', 'ZN-coin_438-3_20231227204754_04_5.pkl',
+                     'ZN-coin_435-1_20231227204625_03_2.pkl', 'ZN-coin_412-2_20231209233028_09_8.pkl',
+                     'ZN-coin_410-2_20231209232626_09_2.pkl', 'ZN-coin_439-1_20231227204804_04_6.pkl',
+                     'ZN-coin_204-2_20231205230217_07_2.pkl', 'ZN-coin_428-2_20231212185058_01_4.pkl',
+                     'ZN-coin_430-2_20231212185305_02_7.pkl', 'ZN-coin_436-2_20231227204653_03_6.pkl',
+                     'ZN-coin_205-3_20231205230239_07_6.pkl', 'ZN-coin_415-1_20231209233508_06_8.pkl',
+                     'ZN-coin_412-1_20231209232958_09_7.pkl', 'ZN-coin_413-1_20231209233202_06_2.pkl',
+                     'ZN-coin_209-1_20231205230248_07_7.pkl', 'ZN-coin_406-2_20231209231604_08_6.pkl',
+                     'ZN-coin_406-3_20231209231637_08_7.pkl', 'ZN-coin_205-1_20231205230230_07_4.pkl',
+                     'ZN-coin_446-1_20240104212538_07_2.pkl', 'ZN-coin_402-3_20231209225844_01_3.pkl']
 
 CALB_train_files = ['CALB_35_B229.pkl', 'CALB_35_B173.pkl', 'CALB_35_B228.pkl', 'CALB_0_B184.pkl', 'CALB_35_B248.pkl',
                     'CALB_35_B227.pkl', 'CALB_0_B185.pkl', 'CALB_35_B249.pkl', 'CALB_35_B223.pkl', 'CALB_35_B224.pkl',
@@ -342,15 +337,13 @@ def relabel_dict_values(d):
 
     return new_d
 
-# label_path = '/data/trf/python_works/BatteryLife/dataset/Life labels'
-label_path = '/data/trf/python_works/PBT_BatteryLife/dataset/Life labels'
+label_path = '/data/trf/python_works/BatteryLife/dataset/Life labels'
 label_files_path = os.listdir(label_path)
 label_json_files = [i for i in label_files_path if i.endswith('.json')]
 label_names = []
 for file in label_json_files:
     if file.startswith('Stanford_labels'):
         continue
-
     with open(os.path.join(label_path, file), 'r') as f:
         label_data = json.load(f)
     print(file, len(label_data))
@@ -373,7 +366,7 @@ for file in tqdm(processed_files):
     else:
         max_value = max(protocols.values())
 
-    if 'CALCE' in file:
+    if file.startswith('CALCE'):
         if 'CS' in file:
             if '33' in file or '34' in file:
                 protocols[file] = 1
@@ -384,12 +377,12 @@ for file in tqdm(processed_files):
                 protocols[file] = 3
             else:
                 protocols[file] = 4
-    elif 'HNEI' in file:
+    elif file.startswith('HNEI'):
         if 'HNEI_18650_NMC_LCO_25C_0-100_0.5-1.5C_a' in file:
             protocols[file] = 5
         else:
             protocols[file] = 6
-    elif 'MATR' in file:
+    elif file.startswith('MATR'):
         if 'b4c0.' in file or 'b4c1.' in file or 'b4c7.' in file or 'b4c17.' in file or 'b4c39.' in file:
             protocols[file] = 7
         elif 'b4c2.' in file or 'b4c22.' in file or 'b4c23.' in file or 'b4c25.' in file or 'b4c35.' in file or 'b4c41.' in file:
@@ -552,9 +545,9 @@ for file in tqdm(processed_files):
             protocols[file] = 86
         elif 'b3c22.' in file or 'b3c31.' in file:
             protocols[file] = 87
-    elif 'UL-PUR' in file:
+    elif file.startswith('UL-PUR'):
         protocols[file] = 88
-    elif 'SNL' in file:
+    elif file.startswith('SNL'):
         if 'SNL_18650_LFP_25C_0-100_0.5-3C_a' in file or 'SNL_18650_LFP_25C_0-100_0.5-3C_b' in file or 'SNL_18650_LFP_25C_0-100_0.5-3C_c' in file or 'SNL_18650_LFP_25C_0-100_0.5-3C_d' in file:
             protocols[file] = 89
         elif 'SNL_18650_LFP_35C_0-100_0.5-1C_b' in file or 'SNL_18650_LFP_35C_0-100_0.5-1C_c' in file or 'SNL_18650_LFP_35C_0-100_0.5-1C_d' in file:
@@ -603,7 +596,7 @@ for file in tqdm(processed_files):
             protocols[file] = 111
         elif 'SNL_18650_LFP_35C_0-100_0.5-1C_a' in file:
             protocols[file] = 112
-    elif 'MICH' in file:
+    elif file.startswith('MICH'):
         if 'MICH_01R_pouch_NMC_25C_0-100_0.2-0.2C' in file:
             protocols[file] = 113
         elif 'MICH_02C_pouch_NMC_-5C_0-100_0.2-0.2C' in file:
@@ -650,9 +643,9 @@ for file in tqdm(processed_files):
                 protocols[file] = 133
             elif '25C' in file:
                 protocols[file] = 134
-    elif 'RWTH' in file:
+    elif file.startswith('RWTH'):
         protocols[file] = 135
-    elif 'Tongji' in file:
+    elif file.startswith('Tongji'):
         if file.startswith('Tongji1_CY25-025_1'):
             protocols[file] = 136
         elif file.startswith('Tongji1_CY25-05_1'):
@@ -675,7 +668,7 @@ for file in tqdm(processed_files):
             protocols[file] = 145
         elif file.startswith('Tongji3_CY25-05_4'):
             protocols[file] = 146
-    elif 'Stanford' in file:
+    elif file.startswith('Stanford'):
         if '100' in file or '101' in file or '102' in file:
             protocols[file] = 147
         elif '190' in file or '191' in file or '192' in file:
@@ -800,12 +793,12 @@ for file in tqdm(processed_files):
             protocols[file] = 207
         elif '187' in file or '188' in file or '189' in file:
             protocols[file] = 208
-    elif 'XJTU' in file:
+    elif file.startswith('XJTU'):
         if file.startswith('XJTU_2C'):
             protocols[file] = 210
         elif file.startswith('XJTU_3C'):
             protocols[file] = 211
-    elif 'ISU-ILCC' in file:
+    elif file.startswith('ISU-ILCC'):
         if 'G1C1' in file:
             protocols[file] = 212
         elif 'G1C2' in file:
@@ -838,7 +831,13 @@ for file in tqdm(processed_files):
             protocols[file] = 226
         elif 'G4C4' in file:
             protocols[file] = 227
-        elif 'G5C' in file:
+        elif 'G5C1' in file:
+            protocols[file] = 228
+        elif 'G5C2' in file:
+            protocols[file] = 228
+        elif 'G5C3' in file:
+            protocols[file] = 228
+        elif 'G5C4' in file:
             protocols[file] = 228
         elif 'G6C1' in file:
             protocols[file] = 229
@@ -864,7 +863,11 @@ for file in tqdm(processed_files):
             protocols[file] = 239
         elif 'G8C4' in file:
             protocols[file] = 240
-        elif 'G9C' in file:
+        elif 'G9C1' in file:
+            protocols[file] = 241
+        elif 'G9C2' in file:
+            protocols[file] = 241
+        elif 'G9C3' in file:
             protocols[file] = 241
         elif 'G10C1' in file:
             protocols[file] = 242
@@ -924,15 +927,45 @@ for file in tqdm(processed_files):
             protocols[file] = 269
         elif 'G19C4' in file:
             protocols[file] = 270
-        elif 'G20C' in file:
+        elif 'G20C1' in file:
             protocols[file] = 271
-        elif 'G21C' in file:
+        elif 'G20C2' in file:
+            protocols[file] = 271
+        elif 'G20C3' in file:
+            protocols[file] = 271
+        elif 'G20C4' in file:
+            protocols[file] = 271
+        elif 'G21C1' in file:
             protocols[file] = 272
-        elif 'G22C' in file:
+        elif 'G21C2' in file:
+            protocols[file] = 272
+        elif 'G21C3' in file:
+            protocols[file] = 272
+        elif 'G21C4' in file:
+            protocols[file] = 272
+        elif 'G22C1' in file:
             protocols[file] = 273
-        elif 'G23C' in file:
+        elif 'G22C2' in file:
+            protocols[file] = 273
+        elif 'G22C3' in file:
+            protocols[file] = 273
+        elif 'G22C4' in file:
+            protocols[file] = 273
+        elif 'G23C1' in file:
             protocols[file] = 274
-        elif 'G24C' in file:
+        elif 'G23C2' in file:
+            protocols[file] = 274
+        elif 'G23C3' in file:
+            protocols[file] = 274
+        elif 'G23C4' in file:
+            protocols[file] = 274
+        elif 'G24C1' in file:
+            protocols[file] = 275
+        elif 'G24C2' in file:
+            protocols[file] = 275
+        elif 'G24C3' in file:
+            protocols[file] = 275
+        elif 'G24C4' in file:
             protocols[file] = 275
         elif 'G25C1' in file:
             protocols[file] = 276
@@ -1202,7 +1235,7 @@ for file in tqdm(processed_files):
             protocols[file] = 408
         elif 'G64C' in file:
             protocols[file] = 409
-    elif 'CALB' in file:
+    elif file.startswith('CALB'):
         if 'CALB_0' in file:
             protocols[file] = 535
         elif 'CALB_25' in file:
@@ -1211,26 +1244,26 @@ for file in tqdm(processed_files):
             protocols[file] = 537
         elif 'CALB_45' in file:
             protocols[file] = 538
-    elif 'NA-ion' in file:
+    elif file.startswith('NA-ion'):
         if 'NA-ion_270040-1-1-64' in file or 'NA-ion_270040-4-8-41' in file or 'NA-ion_270040-6-5-27' in file or 'NA-ion_270040-8-3-18' in file:
             protocols[file] = 539
         elif 'NA-ion_270040-1-2-63' in file or 'NA-ion_270040-1-5-60' in file or 'NA-ion_270040-5-7-33' in file:
             protocols[file] = 540
         elif 'NA-ion_270040-1-3-62' in file or 'NA-ion_270040-3-7-50' in file:
             protocols[file] = 541
-        elif 'NA-ion_270040-1-4-61' in file or 'NA-ion_270040-1-8-57' in file or 'NA-ion_270040-4-3-46' in file or 'NA-ion_270040-4-3-46' in file:
+        elif 'NA-ion_270040-1-4-61' in file or 'NA-ion_270040-1-8-57' in file or 'NA-ion_270040-4-3-46' in file or 'NA-ion_270040-7-1-23' in file:
             protocols[file] = 542
-        elif 'NA-ion_270040-1-6-59' in file or 'NA-ion_270040-4-4-45' in file or 'NA-ion_270040-5-5-35' in file or 'NA-ion_270040-5-5-35' in file or 'NA-ion_270040-6-8-24' in file:
+        elif 'NA-ion_270040-1-6-59' in file or 'NA-ion_270040-4-4-45' in file or 'NA-ion_270040-5-5-35' in file or 'NA-ion_270040-6-8-24' in file or 'NA-ion_270040-6-6-26' in file:
             protocols[file] = 543
-        elif 'NA-ion_270040-1-7-58' in file or 'NA-ion_270040-3-3-54' in file or 'NA-ion_270040-3-4-54' in file:
+        elif 'NA-ion_270040-1-7-58' in file or 'NA-ion_270040-3-3-54' in file or 'NA-ion_270040-3-4-53' in file:
             protocols[file] = 544
-        elif file.startswith('NA-ion_270040-2'):
+        elif file.startswith('NA-ion_270040-2') or 'NA-ion_270040-8-5-16' in file:
             protocols[file] = 545
         elif 'NA-ion_270040-3-1-56' in file:
             protocols[file] = 546
-        elif 'NA-ion_270040-3-2-55' in file or 'NA-ion_270040-5-1-39' in file or 'NA-ion_270040-5-2-38' in file or 'NA-ion_270040-5-3-37' in file or 'NA-ion_270040-5-6-34':
+        elif 'NA-ion_270040-3-2-55' in file or 'NA-ion_270040-5-1-39' in file or 'NA-ion_270040-5-2-38' in file or 'NA-ion_270040-5-3-37' in file or 'NA-ion_270040-5-6-34' in file:
             protocols[file] = 547
-        elif 'NA-ion_270040-3-5-52' in file or 'NA-ion_270040-3-5-52' in file or 'NA-ion_270040-3-8-49' in file or 'NA-ion_270040-4-1-48' in file or 'NA-ion_270040-4-5-44' in file or 'NA-ion_270040-4-7-42' in file or 'NA-ion_270040-6-1-31' in file or 'NA-ion_270040-6-3-29' in file or ' NA-ion_270040-6-4-28' in file or 'NA-ion_270040-6-7-25' in file or 'NA-ion_270040-7-3-21' in file or 'NA-ion_270040-8-1-20' in file or 'NA-ion_270040-8-2-19' in file or 'NA-ion_270040-8-4-17' in file or 'NA-ion_270040-8-6-15' in file or 'NA-ion_270040-8-7-14' in file or 'NA-ion_270040-8-7-14' in file:
+        elif 'NA-ion_270040-3-5-52' in file or 'NA-ion_270040-3-8-49' in file or 'NA-ion_270040-4-1-48' in file or 'NA-ion_270040-4-5-44' in file or 'NA-ion_270040-4-7-42' in file or 'NA-ion_270040-6-1-31' in file or 'NA-ion_270040-6-3-29' in file or ' NA-ion_270040-6-4-28' in file or 'NA-ion_270040-6-7-25' in file or 'NA-ion_270040-7-3-21' in file or 'NA-ion_270040-8-1-20' in file or 'NA-ion_270040-8-2-19' in file or 'NA-ion_270040-8-4-17' in file or 'NA-ion_270040-8-6-15' in file or 'NA-ion_270040-8-7-14' in file or 'NA-ion_270040-8-7-14' in file:
             protocols[file] = 548
         elif 'NA-ion_270040-4-2-47' in file:
             protocols[file] = 549
@@ -1240,7 +1273,7 @@ for file in tqdm(processed_files):
             protocols[file] = 551
         elif 'NA-ion_270040-6-2-30' in file or 'NA-ion_270040-7-2-22' in file:
             protocols[file] = 552
-    elif 'HUST' in file:
+    elif file.startswith('HUST'):
         if '1-1' in file:
             protocols[file] = 553
         elif '1-2' in file:
@@ -1395,7 +1428,7 @@ for file in tqdm(processed_files):
             protocols[file] = 628
         elif '10-8' in file:
             protocols[file] = 629
-    elif 'ZN-coin' in file:
+    elif file.startswith('ZN-coin'):
         if file.startswith('ZN-coin_202_20231213213655_03_3'):
             max_value = 629
 
@@ -1403,5 +1436,5 @@ for file in tqdm(processed_files):
 
 new_d = relabel_dict_values(protocols)
 
-with open("./name2agingConditionID.json", "w") as json_file:
+with open("./gate_data/name2agingConditionID.json", "w") as json_file:
     json.dump(new_d, json_file, indent=4)
