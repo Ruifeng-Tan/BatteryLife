@@ -106,7 +106,7 @@ If you download the processed datasets, you can skip this step.
 
 How to calculate the statistical information of aging conditions for processed data:
 
-- Firstly, run the `domainAdaptation.py` script to generate the `name2agingConditionID.json`, which the aging condition number for each battery.
+- Firstly, run the `aging_conditions.py` script to generate the `name2agingConditionID.json`, which the aging condition number for each battery.
 - Secondly, run the `dataset_overview_calculation.py` script to calculate the aging conditions statistical information for preprocessed data.
 
 ### Train the model [[tutorial](./assets/Model_training.md)]
