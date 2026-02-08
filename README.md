@@ -36,7 +36,7 @@ Note that brief introductions to each dataset are available under the directory 
 
 All the raw datasets are publicly available, interested users can download them from the following links:
 
-- Zn-ion, Na-ion, and CALB datasets: [Zenodo link](https://zenodo.org/records/15013636) [Huggingface link](https://huggingface.co/datasets/Hongwxx/BatteryLife_Raw/tree/main) [[tutorial]](./assets/Data_download.md#how-to-download-the-raw-data-from-huggingface)
+- Zn-ion, Na-ion, and CALB datasets: [Zenodo link](https://zenodo.org/records/17960956) [Huggingface link](https://huggingface.co/datasets/Hongwxx/BatteryLife_Raw/tree/main) [[tutorial]](./assets/Data_download.md#how-to-download-the-raw-data-from-huggingface)
 - CALCE: [link](https://calce.umd.edu/battery-data)
 - MATR: [Three batches](https://data.matr.io/1/projects/5c48dd2bc625d700019f3204) and [Batch 9](https://data.matr.io/1/projects/5d80e633f405260001c0b60a/batches/5dcef1fe110002c7215b2c94)
 - HUST: [link](https://data.mendeley.com/datasets/nsc7hnsg4s/2)
