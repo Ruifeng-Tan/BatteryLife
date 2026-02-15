@@ -2,6 +2,8 @@
 
 This is the official repository for [BatteryLife: A Comprehensive Dataset and Benchmark for Battery Life Prediction](https://dl.acm.org/doi/10.1145/3711896.3737372). If you find this repository useful, we would appreciate citations to our paper and stars to this repository.
 
+🔥**News** (2026.02) BatteryLife downloads exceed 30,000. BatteryLife v10 will be released on Zenodo and Huggingface around March 2026, fixing issues reported over the past year (updated preprocessing scripts are already in this repo). Thanks for the community’s support!
+
 :triangular_flag_on_post:**News** (2025.10) Added the standardized [SDU dataset](https://www.cell.com/cell-reports-physical-science/fulltext/S2666-3864(25)00256-5) to BatteryLife. Corrected the time_in_s column for all batteries.
 
 🔥**News** (2025.08) BatteryLife downloads exceed 10,000.
