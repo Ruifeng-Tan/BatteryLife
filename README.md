@@ -151,6 +151,7 @@ sh ./train_eval_scripts/domain_adaptation_script.sh
 - The data structure of the standardized data is described in [Data_structure_description.md](./assets/Data_structure_description.md). 
 - Further details of data statistics are available at [Further_details_of_data_statistics.md](./assets/Further_details_of_data_statistics.md).
 - Further details of processed charge and discharge capacity data are available at [Further_details_of_processed_charge_and_discharge_capacity_data.md](./assets/Further_details_of_processed_charge_and_discharge_capacity_data.md).
+- BatteryLife v10 update details are available at [Version10_Update_Details.md](./assets/Version10_Update_Details.md).
 
 ## Welcome contributions
 
