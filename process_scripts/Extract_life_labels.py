@@ -66,9 +66,9 @@ for file_name in tqdm(files):
                     find_eol = True
                     break
 
-            # only keep life label >100 cells
-            if eol < 100:
-                continue
+            # # only keep life label >100 cells
+            # if eol < 100:
+            #     continue
             # if not find_eol:
             #     # The end of life is not found in the battery
             #     eol = len(cycle_data) + 1

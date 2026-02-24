@@ -216,6 +216,7 @@ for dataset in dataset_list:
     # print(seen_aging_conditions, unseen_aging_conditions)
 
     print('Seen conditions num in test set:', len(set(seen_aging_conditions)), 'Unseen conditions num in test set:', len(set(unseen_aging_conditions)))
+    print('Total samples for this dataset:', len(training_cells) + len(test_cells))
     print('-------------------------------------')
 
     # break
