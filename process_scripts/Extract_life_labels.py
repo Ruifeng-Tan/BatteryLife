@@ -7,7 +7,7 @@ import json
 import os
 from tqdm import tqdm
 
-dataset_name = ('ISU_ILCC')
+dataset_name = ('ZN-coin')
 dataset_root_path = '../datasets/processed/'
 dataset_path = f'{dataset_root_path}/{dataset_name}'
 files = os.listdir(dataset_path)
@@ -28,9 +28,10 @@ for file_name in tqdm(files):
             nominal_capacity = data['nominal_capacity_in_Ah']
         SOC_interval = data['SOC_interval']  # get the charge and discharge soc interval
         SOC_interval = SOC_interval[1] - SOC_interval[0]
-
+        if SOC_interval == 0:
+            SOC_interval = 1 # fully charge and discharge
         last_cycle_soh = max(last_cycle['discharge_capacity_in_Ah']) / nominal_capacity / SOC_interval
-
+        print(file_name, last_cycle_soh)
 
         if last_cycle_soh >= 0.825:
             # [0.825, inf)
@@ -64,6 +65,10 @@ for file_name in tqdm(files):
                     eol = correct_cycle_index + 1
                     find_eol = True
                     break
+
+            # only keep life label >100 cells
+            if eol < 100:
+                continue
             # if not find_eol:
             #     # The end of life is not found in the battery
             #     eol = len(cycle_data) + 1
@@ -73,7 +78,7 @@ for file_name in tqdm(files):
 
     elif dataset_name == 'CALB':
         data = pickle.load(open(f'{dataset_path}/{file_name}', 'rb'))
-        df = pd.read_csv(f'./CALB_capacity/{file_name}.csv')
+        df = pd.read_csv(f'../generate_soh/CALB/{file_name.split('.pkl')[0]}.csv')
         df = df.fillna(method='backfill')
         cycle_data = data['cycle_data']
         if file_name.startswith('RWTH'):
@@ -81,12 +86,12 @@ for file_name in tqdm(files):
         elif file_name.startswith('SNL_18650_NCA_25C_20-80'):
             nominal_capacity = 3.2
         else:
-            nominal_capacity = df['discharge_capacity'].values[0]# use the capacity of first cycle as nominal capacity for CALB dataset
+            nominal_capacity = df['discharge_capacity_in_Ah'].values[0]# use the capacity of first cycle as nominal capacity for CALB dataset
 
         SOC_interval = data['SOC_interval']  # get the charge and discharge soc interval
         SOC_interval = SOC_interval[1] - SOC_interval[0]
 
-        total_SOHs = df['discharge_capacity'].values / nominal_capacity / SOC_interval
+        total_SOHs = df['discharge_capacity_in_Ah'].values / nominal_capacity / SOC_interval
         total_cycle_numbers = df['cycle_number'].values
         nan_mask = np.isnan(total_SOHs)
         total_SOHs = total_SOHs[~nan_mask]
