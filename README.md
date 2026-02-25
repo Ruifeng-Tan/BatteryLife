@@ -169,7 +169,7 @@ To further broaden the range of available resources, we list below several open-
 | 6     | 2025         | [A dataset of over one thousand computed tomography scans of battery cells](https://plus.figshare.com/articles/dataset/A_dataset_of_over_one_thousand_computed_tomography_scans_of_battery_cells/25330501) | ChemRxiv |                    |
 | 7     | 2026         | [Transfer from lithium to sodium: promoting battery lifetime prognosis application](https://pubs.rsc.org/en/content/articlehtml/2025/eb/d5eb00215j) | EES Batteries |                    |
 | 8     | 2026         | [Large battery model for multi-state co-estimation and intelligent recommendation using mixed data sources](https://data.mendeley.com/datasets/dbwsn6t96j/1) | Energy Storage Materials |                    |
-| 9     | 2026         | [Discovery Learning predicts battery cycle life from minimal experiments](https://zenodo.org/records/17654407) | Nature |                    |
+| 9     | 2026         | [Discovery Learning predicts battery cycle life from minimal experiments](https://zenodo.org/records/17654407) | Nature |       Ongoing             |
 
 If you are interested in contributing, please either submit a pull request or contact us via email at rtan474@connect.hkust-gz.edu.cn and whong719@connect.hkust-gz.edu.cn. To integrate your data into the BatteryLife repositories, please provide:
 
