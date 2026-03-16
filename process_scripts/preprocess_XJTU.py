@@ -82,6 +82,7 @@ class XJTUPreprocessor(BasePreprocessor):
         return process_batteries_num, skip_batteries_num
 
 def organize_cell(timeseries_df, name, path):
+    timeseries_df = timeseries_df.sort_values('system_time')
     cycle_data = []
     for cycle_index, df in timeseries_df.groupby('cycle_number'):
         if cycle_index < 2:
