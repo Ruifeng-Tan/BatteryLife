@@ -150,6 +150,9 @@ def fix_internal_resets(times: List[float], battery_id: Optional[str] = None) ->
     """
     # Threshold for large gaps: 5 minutes = 300 seconds
     LARGE_GAP_THRESHOLD = 300
+    is_isu_ilcc = battery_id is not None and (
+        'ISU_ILCC' in battery_id or 'ISU-ILCC' in battery_id
+    )
 
     if not times or len(times) <= 1:
         return times, {'reset_count': 0, 'reset_positions': [], 'large_gaps_removed': 0, 'large_gap_positions': []}
@@ -171,19 +174,23 @@ def fix_internal_resets(times: List[float], battery_id: Optional[str] = None) ->
         is_reset = False
         is_large_gap = False
 
-        # Method 1: Explicit zero (after first element)
-        if times[i] == 0 and i > 0:
+        # Method 1: ISU_ILCC / ISU-ILCC small backward jumps inside a cycle
+        if is_isu_ilcc and time_diff < 0:
             is_reset = True
             reset_positions.append(i)
-        # Method 2: Significant decrease (more than 50% drop)
+        # Method 2: Explicit zero (after first element)
+        elif times[i] == 0 and i > 0:
+            is_reset = True
+            reset_positions.append(i)
+        # Method 3: Significant decrease (more than 50% drop)
         elif times[i] < times[i-1] * 0.5 and times[i-1] > 10:
             is_reset = True
             reset_positions.append(i)
-        # Method 3: Large backward jump (more than 100 seconds)
+        # Method 4: Large backward jump (more than 100 seconds)
         elif times[i] < times[i-1] - 100:
             is_reset = True
             reset_positions.append(i)
-        # Method 4: Handle large intra-cycle gaps (>5 min) for ALL datasets
+        # Method 5: Handle large intra-cycle gaps (>5 min) for ALL datasets
         elif time_diff > LARGE_GAP_THRESHOLD:
             is_large_gap = True
             large_gaps_removed += 1
