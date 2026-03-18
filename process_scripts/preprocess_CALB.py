@@ -14,7 +14,7 @@ from batteryml import BatteryData, CycleData, CyclingProtocol
 from batteryml.builders import PREPROCESSORS
 from batteryml.preprocess.base import BasePreprocessor
 from .time_normalization_utils import normalize_cycle_times
-
+from typing import List, Tuple
 
 @PREPROCESSORS.register()
 class CALBPreprocessor(BasePreprocessor):
@@ -43,7 +43,7 @@ class CALBPreprocessor(BasePreprocessor):
                     df = df[df['循环号'] > 1]
 
                 # split capacity columns
-                df = split_capacity_column(df, cycle_number_column_name='循环号', current_column_name='电流(A)', capacity_column_name='容量(Ah)', nominal_capacity=58)
+                # df = split_capacity_column(df, cycle_number_column_name='循环号', current_column_name='电流(A)', capacity_column_name='容量(Ah)', nominal_capacity=58)
 
                 # organize data
                 battery = organize_cell(df, cell_name, 58, files_path)
@@ -54,6 +54,121 @@ class CALBPreprocessor(BasePreprocessor):
                     tqdm.write(f'File: {battery.cell_id} dumped to pkl file')
 
         return process_batteries_num, skip_batteries_num
+
+
+def process_battery_cycle(df: pd.DataFrame) -> Tuple[List[float], List[float]]:
+    """Processes battery cycle data to calculate cumulative charge and discharge capacities.
+
+    This function utilizes vectorized pandas operations for efficiency. It assumes that 
+    charge steps are continuous within each step number and do not interleave with 
+    discharge or other steps.
+
+    Processing Rules:
+    1. Charge Steps: For the N-th charge step, Capacity = Raw Capacity + Last Capacity 
+       of Step N-1. (Step 1 has an offset of 0).
+    2. Discharge Steps: Keep raw discharge capacity, set charge capacity to 0.
+    3. Other Steps: Set both charge and discharge capacities to 0.
+
+    Args:
+        df (pd.DataFrame): Input DataFrame containing battery cycle data. Must include 
+            the following columns:
+            - "工步号": Step number.
+            - "工步类型": Step type string (e.g., "恒流充电", "恒压放电", "静置").
+            - "充电容量 (Ah)": Raw charge capacity data.
+            - "放电容量 (Ah)": Raw discharge capacity data.
+
+    Returns:
+        tuple: A tuple containing two lists:
+            - List[float]: Processed charge capacity data.
+            - List[float]: Processed discharge capacity data.
+
+    Raises:
+        TypeError: If the input is not a pandas DataFrame.
+        ValueError: If the DataFrame is missing required columns.
+
+    Example:
+        >>> data = {
+        ...     "工步号": [1, 1, 2, 2, 3, 3, 4],
+        ...     "工步类型": ["恒流充电", "恒流充电", "静置", "恒流充电", "恒流充电", "恒流充电", "恒流放电"],
+        ...     "充电容量 (Ah)": [0.1, 0.2, 0.0, 0.1, 0.1, 0.2, 0.0],
+        ...     "放电容量 (Ah)": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5]
+        ... }
+        >>> df = pd.DataFrame(data)
+        >>> charge_list, discharge_list = process_battery_cycle(df)
+        >>> print(charge_list)
+        [0.1, 0.2, 0.0, 0.3, 0.3, 0.4, 0.0]
+    """
+    # Input validation
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("Input must be a pandas DataFrame.")
+    
+    required_columns = ["工步号", "工步类型"]
+    if "充电容量 (Ah)" in df.columns:
+        required_columns.append("充电容量 (Ah)")
+        charge_cap_key = "充电容量 (Ah)"
+    else:
+        required_columns.append("充电容量(Ah)")
+        charge_cap_key = "充电容量(Ah)"
+    
+    if "放电容量 (Ah)" in df.columns:
+        required_columns.append("放电容量 (Ah)")
+        discharge_cap_key = "放电容量 (Ah)"
+    else:
+        required_columns.append("放电容量(Ah)")
+        discharge_cap_key = "放电容量(Ah)"
+    
+    missing_cols = [col for col in required_columns if col not in df.columns]
+    if missing_cols:
+        raise ValueError(f"DataFrame is missing required columns: {missing_cols}")
+    
+    if df.empty:
+        return [], []
+
+    # Create a copy to avoid modifying original data
+    result_df = df.copy()
+    
+    # Initialize result columns
+    result_df["processed_charge"] = 0.0
+    result_df["processed_discharge"] = 0.0
+
+    # Identify charge steps
+    # Check if each row contains "充电" in the step type
+    is_charge_mask = result_df["工步类型"].str.contains("充电", na=False)
+    
+    # Get unique step numbers for charge steps (preserving order)
+    charge_step_numbers = result_df.loc[is_charge_mask, "工步号"].unique()
+    
+    # Cumulative offset for charge steps
+    # Used to add the last capacity value of the previous charge step to the current one
+    cumulative_offset = 0.0
+    
+    # Process each charge step group
+    for step_num in charge_step_numbers:
+        # Get mask for the current step number
+        step_mask = result_df["工步号"] == step_num
+        
+        # Get raw charge capacity for this step
+        raw_charges = result_df.loc[step_mask, charge_cap_key].values.astype(float)
+        
+        # Calculate processed charge capacity = Raw Value + Cumulative Offset
+        processed_charges = raw_charges + cumulative_offset
+        
+        # Update results
+        result_df.loc[step_mask, "processed_charge"] = processed_charges
+        
+        # Update cumulative offset to the last processed charge value of this step
+        # This will be used for the next charge step (N+1)
+        if len(processed_charges) > 0:
+            cumulative_offset = processed_charges[-1]
+    
+    # Process discharge steps
+    # Identify discharge steps
+    is_discharge_mask = result_df["工步类型"].str.contains("放电", na=False)
+    # Keep raw discharge capacity, charge capacity remains 0 (initialized)
+    result_df.loc[is_discharge_mask, "processed_discharge"] = result_df.loc[is_discharge_mask, discharge_cap_key].values
+    
+    # Convert to list for output
+    return result_df["processed_charge"].tolist(), result_df["processed_discharge"].tolist()
 
 def organize_cell(timeseries_df, name, C, temperature):
     temperature_in_C_value = 0
@@ -121,20 +236,14 @@ def organize_cell(timeseries_df, name, C, temperature):
                 discharge_capacities = df['放电容量(Ah)'].tolist()
                 charge_capacities = list(np.array(capacities) - np.array(discharge_capacities))
             else:
-                charge_capacities = []
-                for cc in list(df['充电容量(Ah)'].values):
-                    if len(charge_capacities) == 0:
-                        charge_capacities.append(cc)
-                    else:
-                        accumulate_cc = charge_capacities[-1] + cc
-                        charge_capacities.append(accumulate_cc)
+                charge_capacities, discharge_capacities = process_battery_cycle(df)
 
             cycle_data.append(CycleData(
                 cycle_number=int(cycle_index),
                 voltage_in_V=df['电压(V)'].tolist(),
                 current_in_A=df['电流(A)'].tolist(),
                 temperature_in_C=list([temperature_in_C_value] * len(df)),
-                discharge_capacity_in_Ah=df['放电容量(Ah)'].tolist(),
+                discharge_capacity_in_Ah=discharge_capacities,
                 charge_capacity_in_Ah=charge_capacities,
                 time_in_s=times
             ))
@@ -164,8 +273,6 @@ def organize_cell(timeseries_df, name, C, temperature):
         max_voltage_limit_in_V=upper_cutoff_voltage,
         SOC_interval=soc_interval
     )
-
-def split_capacity_column(df, cycle_number_column_name, current_column_name, capacity_column_name, nominal_capacity):
     cycle_number = list(set(df[cycle_number_column_name].values))
     for cycle in cycle_number:
         current_records = df.loc[df[cycle_number_column_name] == cycle, current_column_name].values
