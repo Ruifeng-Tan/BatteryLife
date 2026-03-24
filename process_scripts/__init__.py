@@ -4,7 +4,6 @@ from .preprocess_CALCE import CALCEPreprocessor
 from .preprocess_HNEI import HNEIPreprocessor
 from .preprocess_HUST import HUSTPreprocessor
 from .preprocess_MATR import MATRPreprocessor
-from .preprocess_OX import OXPreprocessor
 from .preprocess_RWTH import RWTHPreprocessor
 from .preprocess_SNL import SNLPreprocessor
 from .preprocess_UL_PUR import UL_PURPreprocessor
@@ -24,6 +23,6 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 SUPPORTED_SOURCES = {
-    'DATASETS': ['CALCE', 'HNEI', 'HUST', 'MATR', 'OX', 'RWTH', 'SNL', 'UL_PUR', 'MICH', 'MICH_EXP', 'ISU_ILCC', 'Stanford', 'ZNion', 'XJTU', 'Tongji', 'NA', 'CALB'],
-    'CYCLERS': ['ARBIN', 'BATTERYARCHIVE', "BIOLOGIC",  'INDIGO',  "LANDT", "MACCOR", 'NEWARE', 'NOVONIX', 'BATTERYARCHIVE', 'BATTERYARCHIVE', 'NEWARE', 'Unknown', 'ME', 'LISHEN', 'SAMSUNG', 'NEWARE', 'CALB']
+    'DATASETS': ['CALCE', 'HNEI', 'HUST', 'MATR', 'RWTH', 'SNL', 'UL_PUR', 'MICH', 'MICH_EXP', 'ISU_ILCC', 'Stanford', 'ZNion', 'XJTU', 'Tongji', 'NA', 'CALB'],
+    'CYCLERS': ['ARBIN', 'BATTERYARCHIVE', "BIOLOGIC",  'INDIGO', "MACCOR", 'NEWARE', 'NOVONIX', 'BATTERYARCHIVE', 'BATTERYARCHIVE', 'NEWARE', 'Unknown', 'ME', 'LISHEN', 'SAMSUNG', 'NEWARE', 'CALB']
 }

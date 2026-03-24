@@ -391,8 +391,6 @@ class Dataset_original(Dataset):
             if not os.path.isdir(f'{self.root_path}/total_MICH/'):
                 self.merge_MICH(f'{self.root_path}/total_MICH/')
             data =  pickle.load(open(f'{self.root_path}/total_MICH/{file_name}', 'rb'))
-        elif prefix.startswith('OX'):
-            data =  pickle.load(open(f'{self.root_path}/OX/{file_name}', 'rb'))
         elif prefix.startswith('RWTH'):
             data =  pickle.load(open(f'{self.root_path}/RWTH/{file_name}', 'rb'))  
         elif prefix.startswith('UL-PUR'):
@@ -561,7 +559,7 @@ class Dataset_original(Dataset):
                 discharge_end_index = cutoff_voltage_indices[0][-1]
                 
                 # tmp_discharge_capacity_records = max(charge_capacity_records) - discharge_capacity_records
-                if prefix in ['RWTH', 'OX', 'ZN-coin', 'CALB_0', 'CALB_25', 'CALB_45'] or (file_name not in self.ZN_coin_charge_first_file_names and prefix=='ZN-coin'):
+                if prefix in ['RWTH', 'CALB_0', 'CALB_25', 'CALB_45'] or (file_name not in self.ZN_coin_charge_first_file_names and prefix=='ZN-coin'):
                     # Every cycle first discharge and then charge
                     #capacity_in_battery = np.where(charge_capacity_records==0, discharge_capacity_records, charge_capacity_records)
                     discharge_voltages = voltage_records[:discharge_end_index]
