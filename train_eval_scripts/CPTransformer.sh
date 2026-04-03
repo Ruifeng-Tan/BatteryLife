@@ -3,15 +3,15 @@ dataset=MIX_large # MIX_large
 train_epochs=100
 early_cycle_threshold=100
 learning_rate=0.00005
-master_port=25215
+master_port=25216
 num_process=2
-batch_size=16
+batch_size=32
 n_heads=4
 seq_len=1
-accumulation_steps=2
+accumulation_steps=1
 lstm_layers=6
-e_layers=12
-d_layers=0
+e_layers=6
+d_layers=4
 d_model=128
 d_ff=256
 dropout=0
@@ -19,15 +19,15 @@ charge_discharge_length=300
 patience=5 # Eearly stopping patience
 lradj=constant
 loss=MSE
-seed=2021
+seed=2024
 
-checkpoints=/path/to/your/saving/folder # the save path of checkpoints
+checkpoints=/data/hwx/BL_new # the save path of checkpoints
 data=Dataset_original
-root_path=./dataset
+root_path=/data/trf/python_works/BatteryLife/dataset
 comment='CPTransformer'
 task_name=classification
 
-CUDA_VISIBLE_DEVICES=0,1 accelerate launch --multi_gpu  --num_processes $num_process --main_process_port $master_port run_main.py \
+CUDA_VISIBLE_DEVICES=2,3 accelerate launch --multi_gpu  --num_processes $num_process --main_process_port $master_port run_main.py \
   --task_name $task_name \
   --data $data \
   --is_training 1 \
