@@ -6,4 +6,5 @@ __pycache__/
 wandb/
 outs/
 dev/
-analysis/
+.qwen/
+results/
