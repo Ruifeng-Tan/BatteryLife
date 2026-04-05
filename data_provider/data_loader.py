@@ -595,6 +595,19 @@ class Dataset_original(Dataset):
                     charge_capacities = charge_capacity_records[:charge_end_index]
                     charge_currents = current_records[:charge_end_index]
                     charge_times = time_in_s_records[:charge_end_index]
+
+                    # --- START PARTIAL CHARGING LOGIC ---
+                    if prefix.startswith('NA-ion'):
+                        # Calculate SoC relative to Nominal Capacity
+                        soc = charge_capacities / nominal_capacity
+                        soc_mask = (soc >= 0.20) & (soc <= 0.80)
+                        
+                    if np.sum(soc_mask) > 1: # at least 2 points
+                        charge_voltages = charge_voltages[soc_mask]
+                        charge_capacities = charge_capacities[soc_mask]
+                        charge_currents = charge_currents[soc_mask]
+                        charge_times = charge_times[soc_mask]
+                    # --- END PARTIAL CHARGING LOGIC ---
                 
                 # try:
                 #     discharge_voltages, discharge_currents, discharge_capacities = self.resample_charge_discharge_curvesv2(discharge_voltages, discharge_currents, discharge_capacities)
