@@ -84,9 +84,40 @@ class split_recorder():
     NAion_42_val_files = ['NA-ion_270040-6-6-26.pkl', 'NA-ion_270040-1-8-57.pkl', 'NA-ion_270040-5-8-32.pkl', 'NA-ion_270040-5-3-37.pkl', 'NA-ion_270040-1-6-59.pkl', 'NA-ion_270040-5-5-35.pkl']
     NAion_42_test_files = ['NA-ion_270040-2-5-12.pkl', 'NA-ion_270040-1-3-62.pkl', 'NA-ion_270040-3-7-50.pkl', 'NA-ion_270040-8-5-16.pkl', 'NA-ion_270040-1-7-58.pkl']
 
-    NAion_2021_train_files = ['NA-ion_270040-1-2-63.pkl', 'NA-ion_270040-1-5-60.pkl', 'NA-ion_270040-1-7-58.pkl', 'NA-ion_270040-1-8-57.pkl', 'NA-ion_270040-2-2-12.pkl', 'NA-ion_270040-2-5-12.pkl', 'NA-ion_270040-3-1-56.pkl', 'NA-ion_270040-3-5-52.pkl', 'NA-ion_270040-5-2-38.pkl', 'NA-ion_270040-3-8-49.pkl', 'NA-ion_270040-5-1-39.pkl', 'NA-ion_270040-5-3-37.pkl', 'NA-ion_270040-5-6-34.pkl', 'NA-ion_270040-5-7-33.pkl', 'NA-ion_270040-6-2-30.pkl', 'NA-ion_270040-6-6-26.pkl', 'NA-ion_270040-7-1-23.pkl', 'NA-ion_270040-8-5-16.pkl', 'NA-ion_270040-3-3-54.pkl', 'NA-ion_270040-6-8-24.pkl']
-    NAion_2021_val_files = ['NA-ion_270040-4-2-47.pkl', 'NA-ion_270040-4-6-43.pkl', 'NA-ion_270040-5-5-35.pkl', 'NA-ion_270040-1-6-59.pkl', 'NA-ion_270040-3-4-53.pkl', 'NA-ion_270040-3-2-55.pkl']
-    NAion_2021_test_files = ['NA-ion_270040-5-8-32.pkl', 'NA-ion_270040-4-3-46.pkl', 'NA-ion_270040-4-1-48.pkl', 'NA-ion_270040-1-3-62.pkl', 'NA-ion_270040-3-7-50.pkl']
+    # --- TRAIN FILES (44 Dosya - %70) ---
+    NAion_2021_train_files = [
+        'NA-ion_270040-1-2-63.pkl', 'NA-ion_270040-1-5-60.pkl', 'NA-ion_270040-1-7-58.pkl', 
+        'NA-ion_270040-1-8-57.pkl', 'NA-ion_270040-2-2-12.pkl', 'NA-ion_270040-2-5-12.pkl', 
+        'NA-ion_270040-3-1-56.pkl', 'NA-ion_270040-3-5-52.pkl', 'NA-ion_270040-5-2-38.pkl', 
+        'NA-ion_270040-3-8-49.pkl', 'NA-ion_270040-5-1-39.pkl', 'NA-ion_270040-5-3-37.pkl', 
+        'NA-ion_270040-5-6-34.pkl', 'NA-ion_270040-5-7-33.pkl', 'NA-ion_270040-6-2-30.pkl', 
+        'NA-ion_270040-6-6-26.pkl', 'NA-ion_270040-7-1-23.pkl', 'NA-ion_270040-8-5-16.pkl', 
+        'NA-ion_270040-3-3-54.pkl', 'NA-ion_270040-6-8-24.pkl', 'NA-ion_270040-1-1-64.pkl', 
+        'NA-ion_270040-2-1-12.pkl', 'NA-ion_270040-2-3-12.pkl', 'NA-ion_270040-2-4-12.pkl', 
+        'NA-ion_270040-2-6-12.pkl', 'NA-ion_270040-2-7-12.pkl', 'NA-ion_270040-2-8-12.pkl', 
+        'NA-ion_270040-3-6-51.pkl', 'NA-ion_270040-4-4-45.pkl', 'NA-ion_270040-4-5-44.pkl', 
+        'NA-ion_270040-4-7-42.pkl', 'NA-ion_270040-4-8-41.pkl', 'NA-ion_270040-5-4-36.pkl', 
+        'NA-ion_270040-6-1-31.pkl', 'NA-ion_270040-6-3-29.pkl', 'NA-ion_270040-6-4-28.pkl', 
+        'NA-ion_270040-6-5-27.pkl', 'NA-ion_270040-6-7-25.pkl', 'NA-ion_270040-7-2-22.pkl', 
+        'NA-ion_270040-7-3-21.pkl', 'NA-ion_270040-8-1-20.pkl', 'NA-ion_270040-8-2-19.pkl',
+        'NA-ion_4000-30_20250115110206_DefaultGroup_45_1.pkl',
+        'NA-ion_4500-30_20250114232539_DefaultGroup_45_8.pkl'
+    ]
+
+    # --- VAL FILES (10 Dosya - %15) ---
+    NAion_2021_val_files = [
+        'NA-ion_270040-4-2-47.pkl', 'NA-ion_270040-4-6-43.pkl', 'NA-ion_270040-5-5-35.pkl', 
+        'NA-ion_270040-1-6-59.pkl', 'NA-ion_270040-3-4-53.pkl', 'NA-ion_270040-3-2-55.pkl',
+        'NA-ion_270040-1-4-61.pkl', 'NA-ion_270040-8-3-18.pkl', 'NA-ion_270040-8-4-17.pkl',
+        'NA-ion_5000-25_20250115110326_DefaultGroup_38_1.pkl'
+    ]
+
+    # --- TEST FILES (10 Dosya - %15) ---
+    NAion_2021_test_files = [
+        'NA-ion_270040-5-8-32.pkl', 'NA-ion_270040-4-3-46.pkl', 'NA-ion_270040-4-1-48.pkl', 
+        'NA-ion_270040-1-3-62.pkl', 'NA-ion_270040-3-7-50.pkl', 'NA-ion_270040-8-6-15.pkl',
+        'NA-ion_270040-8-7-14.pkl', 'NA-ion_270040-8-8-13.pkl', 'NA-ion_2850-30_20250117105706_DefaultGroup_45_2.pkl',
+        'NA-ion_5000-25_20250115110326_DefaultGroup_38_2.pkl'
     
     NAion_2024_train_files = ['NA-ion_270040-1-2-63.pkl', 'NA-ion_270040-6-8-24.pkl', 'NA-ion_270040-1-5-60.pkl', 'NA-ion_270040-1-6-59.pkl', 'NA-ion_270040-1-7-58.pkl', 'NA-ion_270040-1-8-57.pkl', 'NA-ion_270040-2-5-12.pkl', 'NA-ion_270040-3-3-54.pkl', 'NA-ion_270040-3-5-52.pkl', 'NA-ion_270040-2-2-12.pkl', 'NA-ion_270040-3-8-49.pkl', 'NA-ion_270040-4-2-47.pkl', 'NA-ion_270040-4-3-46.pkl', 'NA-ion_270040-4-6-43.pkl', 'NA-ion_270040-5-3-37.pkl', 'NA-ion_270040-5-5-35.pkl', 'NA-ion_270040-5-7-33.pkl', 'NA-ion_270040-5-8-32.pkl', 'NA-ion_270040-6-6-26.pkl', 'NA-ion_270040-5-6-34.pkl']
     NAion_2024_val_files = ['NA-ion_270040-4-1-48.pkl', 'NA-ion_270040-7-1-23.pkl', 'NA-ion_270040-6-2-30.pkl', 'NA-ion_270040-3-2-55.pkl', 'NA-ion_270040-5-2-38.pkl', 'NA-ion_270040-3-1-56.pkl']
