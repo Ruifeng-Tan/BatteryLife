@@ -23,8 +23,8 @@ This is the official repository for [BatteryLife: A Comprehensive Dataset and Be
 ## Highlights
 (Data statistics are based on the initial release of BatteryLife.)
 
-- **The largest battery life dataset:** BatteryLife is created by integrating 16 datasets, providing 99,000 samples from 990 batteries with life labels. This is 2.5 times the size of BatteryML, which is the previous largest battery life resource.
-- **The most diverse battery life dataset:** BatteryLife contains 8 battery formats, 59 chemical systems, 9 operation temperatures, and 421 charge/discharge protocols. Compared with the previous largest battery life resource (BatteryML), BatteryLife furnishes 4 times format, 11.8 times chemical system, 1.8 times operating temperature, and 2.2 times charge/discharge protocol.
+- **The largest battery life dataset:** BatteryLife is created by integrating 16 datasets, providing 99,000 samples from 990 batteries with life labels.
+- **The most diverse battery life dataset:** BatteryLife contains 8 battery formats, 59 chemical systems, 9 operation temperatures, and 421 charge/discharge protocols.
 - **A comprehensive benchmark for battery life prediction:** BatteryLife provides 18 benchmark methods with open-source codes in this repository. The 18 benchmark methods include popular methods for battery life prediction, popular baselines in time series analysis, and a series of baselines proposed by this work.
 
 ## Data availability
@@ -166,7 +166,7 @@ To further broaden the range of available resources, we list below several open-
 | 3     | 2025         | [Aging matrix visualizes complexity of battery aging across hundreds of cycling protocols](https://data.matr.io/11/) | Energy & Environmental Science |                    |
 | 4     | 2025         | [Degradation path prediction of lithium-ion batteries under dynamic operating sequences](https://data.mendeley.com/datasets/h2y7mj4kt7/2) | Energy & Environmental Science | Ongoing                   |
 | 5     | 2025         | [Non-destructive degradation pattern decoupling for early battery trajectory prediction via physics-informed learning](https://zenodo.org/records/10715209) | Energy & Environmental Science |                    |
-| 6     | 2025         | [A dataset of over one thousand computed tomography scans of battery cells](https://plus.figshare.com/articles/dataset/A_dataset_of_over_one_thousand_computed_tomography_scans_of_battery_cells/25330501) | ChemRxiv |  Ongoing                  |
+| 6     | 2025         | [A dataset of over one thousand computed tomography scans of battery cells](https://plus.figshare.com/articles/dataset/A_dataset_of_over_one_thousand_computed_tomography_scans_of_battery_cells/25330501) | ChemRxiv |                    |
 | 7     | 2026         | [Transfer from lithium to sodium: promoting battery lifetime prognosis application](https://pubs.rsc.org/en/content/articlehtml/2025/eb/d5eb00215j) | EES Batteries |                    |
 | 8     | 2026         | [Large battery model for multi-state co-estimation and intelligent recommendation using mixed data sources](https://data.mendeley.com/datasets/dbwsn6t96j/1) | Energy Storage Materials |                    |
 | 9     | 2026         | [Discovery Learning predicts battery cycle life from minimal experiments](https://zenodo.org/records/17654407) | Nature |       Ongoing             |
