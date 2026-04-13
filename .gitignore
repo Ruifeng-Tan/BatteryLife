@@ -9,3 +9,8 @@ dev/
 .qwen/
 results/
 analysis/
+BatteryML-main/
+batteryml/
+dataset/
+
+/tmp*

@@ -6,22 +6,17 @@ import pandas as pd
 import pyarrow.parquet as pq
 import gc
 import re
-import multiprocessing as mp
 
 from tqdm import tqdm
 from typing import List
 from pathlib import Path
 
-from batteryml import BatteryData, CycleData, CyclingProtocol
+from batteryml.data import BatteryData, CycleData, CyclingProtocol
 from batteryml.builders import PREPROCESSORS
 from batteryml.preprocess.base import BasePreprocessor
 
 
 FARASIS_C_RATE = 0.333333
-PULSE_CURRENT_THRESHOLD_A = 80.0
-FORMATION_CURRENT_THRESHOLD_A = 5.0
-MIN_DISCHARGE_STEP_DURATION_S = 600.0
-MAX_PULSE_STEP_DURATION_S = 20.0
 
 
 @PREPROCESSORS.register()
@@ -44,7 +39,7 @@ class FarasisPreprocessor(BasePreprocessor):
                 skip_batteries_num += 1
                 continue
 
-            ok, message = _run_single_file_isolated(parquet_file, raw_root, self.output_dir)
+            ok, message = _process_single_file(parquet_file, raw_root, self.output_dir)
             if ok:
                 process_batteries_num += 1
                 if not self.silent:
@@ -57,27 +52,41 @@ class FarasisPreprocessor(BasePreprocessor):
         return process_batteries_num, skip_batteries_num  # type: ignore[return-value]
 
 
-def organize_cell(timeseries_df, name, already_sampled=False):
+def organize_cell(timeseries_df, name):
     required_cols = {'current (A)', 'voltage (V)'}
     if not required_cols.issubset(set(timeseries_df.columns)):
         return None
 
     df = timeseries_df.copy()
-    df['current (A)'] = pd.to_numeric(df['current (A)'], errors='coerce').fillna(0.0).astype(np.float32)
-    df['voltage (V)'] = pd.to_numeric(df['voltage (V)'], errors='coerce').astype(np.float32)
+
+    current_numeric = pd.to_numeric(df['current (A)'], errors='coerce')
+    voltage_numeric = pd.to_numeric(df['voltage (V)'], errors='coerce')
+    # Scheme-1 pass-through: keep original parquet values if already numeric.
+    current_passthrough = df['current (A)'] if pd.api.types.is_numeric_dtype(df['current (A)']) else current_numeric
+    voltage_passthrough = df['voltage (V)'] if pd.api.types.is_numeric_dtype(df['voltage (V)']) else voltage_numeric
 
     if 'rpt' in df.columns:
         df['rpt'] = pd.to_numeric(df['rpt'], errors='coerce').astype(np.float32)
-    if 'step_no' in df.columns:
-        df['step_no'] = pd.to_numeric(df['step_no'], errors='coerce').fillna(0).astype(np.int32)
     if 'del_time' in df.columns:
         df['del_time'] = pd.to_numeric(df['del_time'], errors='coerce').fillna(0.0).astype(np.float32)
     if 'temp' in df.columns:
         df['temp'] = pd.to_numeric(df['temp'], errors='coerce').astype(np.float32)
 
-    df = df.dropna(subset=['voltage (V)'])
-    if len(df) < 2:
+    time_all_full = _build_time_in_seconds(df)
+    valid = (
+        np.isfinite(current_numeric.to_numpy(dtype=float))
+        & np.isfinite(voltage_numeric.to_numpy(dtype=float))
+        & np.isfinite(time_all_full)
+    )
+    if int(np.count_nonzero(valid)) < 2:
         return None
+
+    df = df.loc[valid].reset_index(drop=True)
+    current_all_numeric = current_numeric.loc[valid].to_numpy(dtype=float)
+    voltage_all_numeric = voltage_numeric.loc[valid].to_numpy(dtype=float)
+    current_all_passthrough = current_passthrough.loc[valid].to_numpy()
+    voltage_all_passthrough = voltage_passthrough.loc[valid].to_numpy()
+    time_all = time_all_full[valid]
 
     cycle_ids, cycle_attributes = _infer_cycle_ids_and_attributes(df)
     cycle_data = []
@@ -85,12 +94,9 @@ def organize_cell(timeseries_df, name, already_sampled=False):
     cumulative_time_offset = 0.0
 
     # Build base arrays once and slice by explicit integer indices to keep strict alignment.
-    current_all = df['current (A)'].to_numpy(dtype=float)
-    voltage_all = df['voltage (V)'].to_numpy(dtype=float)
     temp_all = None
     if 'temp' in df.columns:
         temp_all = pd.to_numeric(df['temp'], errors='coerce').to_numpy(dtype=float)
-    time_all = _build_time_in_seconds(df)
 
     for cycle_number in sorted(np.unique(cycle_ids)):
         if int(cycle_number) <= 0:
@@ -100,8 +106,6 @@ def organize_cell(timeseries_df, name, already_sampled=False):
         if len(cycle_idx) < 2:
             continue
 
-        current_cycle = current_all[cycle_idx]
-        voltage_cycle = voltage_all[cycle_idx]
         time_cycle = time_all[cycle_idx]
 
         keep_indices = np.arange(len(time_cycle), dtype=int)
@@ -109,13 +113,14 @@ def organize_cell(timeseries_df, name, already_sampled=False):
         sampled_idx = cycle_idx[keep_indices]
 
         # Strictly index-aligned series from the same sampled row indices.
-        current_in_A = current_all[sampled_idx]
-        voltage_in_V = voltage_all[sampled_idx]
+        current_in_A = current_all_passthrough[sampled_idx]
+        voltage_in_V = voltage_all_passthrough[sampled_idx]
+        current_in_A_numeric = current_all_numeric[sampled_idx]
         time_in_s = time_all[sampled_idx]
 
         # Keep time continuous across cycles instead of resetting to zero each cycle.
         time_in_s = time_in_s - float(time_in_s[0]) + cumulative_time_offset
-        charge_capacity_in_Ah, discharge_capacity_in_Ah = _integrate_capacity(current_in_A, time_in_s)
+        charge_capacity_in_Ah, discharge_capacity_in_Ah = _integrate_capacity(current_in_A_numeric, time_in_s)
 
         if len(time_in_s) < 2:
             continue
@@ -140,7 +145,7 @@ def organize_cell(timeseries_df, name, already_sampled=False):
             attribute=cycle_attributes.get(int(cycle_number), 'Cycling')
         ))
 
-        all_voltages.append(voltage_in_V)
+        all_voltages.append(voltage_all_numeric[sampled_idx])
 
     if len(cycle_data) == 0:
         return None
@@ -171,8 +176,7 @@ def organize_cell(timeseries_df, name, already_sampled=False):
 
 
 def _infer_cycle_ids_and_attributes(df):
-    current = pd.to_numeric(df['current (A)'], errors='coerce').fillna(0.0).to_numpy(dtype=float)
-    n = len(current)
+    n = len(df)
     cycle_ids = np.zeros(n, dtype=int)
     cycle_attrs = {}
     if n == 0:
@@ -183,107 +187,109 @@ def _infer_cycle_ids_and_attributes(df):
         cycle_attrs[1] = 'Cycling'
         return cycle_ids, cycle_attrs
 
-    rpt = pd.to_numeric(df['rpt'], errors='coerce').ffill().bfill().fillna(0).to_numpy(dtype=int)
+    # New rule:
+    # - contiguous non-empty rpt segments -> attribute 'RPT'
+    # - contiguous empty rpt segments -> attribute 'Cycling'
+    # Empty segments are naturally split by adjacent numbered rpt segments.
+    rpt_raw = pd.to_numeric(df['rpt'], errors='coerce').to_numpy(dtype=float)
+    is_blank = ~np.isfinite(rpt_raw)
 
     cycle_no = 1
     start = 0
-    for i in range(1, n):
-        if rpt[i] != rpt[i - 1]:
-            cycle_ids[start:i] = cycle_no
-            seg_curr = current[start:i]
-            max_abs_i = float(np.nanmax(np.abs(seg_curr))) if len(seg_curr) > 0 else 0.0
-            cycle_attrs[cycle_no] = 'Formation' if (cycle_no == 1 and max_abs_i <= FORMATION_CURRENT_THRESHOLD_A) else 'Cycling'
+    while start < n:
+        if is_blank[start]:
+            end = start + 1
+            while end < n and is_blank[end]:
+                end += 1
+            cycle_ids[start:end] = cycle_no
+            cycle_attrs[cycle_no] = 'Cycling'
             cycle_no += 1
-            start = i
+            start = end
+            continue
 
-    cycle_ids[start:n] = cycle_no
-    seg_curr = current[start:n]
-    max_abs_i = float(np.nanmax(np.abs(seg_curr))) if len(seg_curr) > 0 else 0.0
-    cycle_attrs[cycle_no] = 'Formation' if (cycle_no == 1 and max_abs_i <= FORMATION_CURRENT_THRESHOLD_A) else 'Cycling'
+        rpt_value = rpt_raw[start]
+        end = start + 1
+        while end < n and (not is_blank[end]) and float(rpt_raw[end]) == float(rpt_value):
+            end += 1
+        cycle_ids[start:end] = cycle_no
+        cycle_attrs[cycle_no] = 'RPT'
+        cycle_no += 1
+        start = end
 
     return cycle_ids, cycle_attrs
 
 
 def _build_time_in_seconds(cycle_df):
+    if 'del_time' in cycle_df.columns:
+        dt = pd.to_numeric(cycle_df['del_time'], errors='coerce').fillna(0.0).to_numpy(dtype=float)
+        dt = np.maximum(dt, 0.0)
+        if len(dt) > 0:
+            dt[0] = 0.0
+        return np.cumsum(dt)
+
     if 'time_stamp' in cycle_df.columns:
         ts = pd.to_datetime(cycle_df['time_stamp'], errors='coerce')
         if ts.notna().sum() >= 2:
             seconds = (ts - ts.iloc[0]).dt.total_seconds().to_numpy(dtype=float)
             return np.maximum.accumulate(np.nan_to_num(seconds, nan=0.0))
 
-    if 'del_time' in cycle_df.columns:
-        dt = pd.to_numeric(cycle_df['del_time'], errors='coerce').fillna(0.0).to_numpy(dtype=float)
-        dt = np.maximum(dt, 0.0)
-        return np.cumsum(dt)
-
     return np.arange(len(cycle_df), dtype=float)
 
 
 def _integrate_capacity(current_in_A, time_in_s):
-    dt = np.diff(time_in_s, prepend=time_in_s[0])
+    current = np.asarray(current_in_A, dtype=float)
+    time_s = np.asarray(time_in_s, dtype=float)
+
+    n = min(len(current), len(time_s))
+    if n == 0:
+        return np.array([]), np.array([])
+
+    current = current[:n]
+    time_s = time_s[:n]
+
+    dt = np.diff(time_s, prepend=time_s[0])
     dt = np.maximum(dt, 0.0)
 
     # Reset capacity at each contiguous charge/discharge segment.
-    # This avoids unbounded accumulation over a long rpt block.
-    charge_capacity = np.zeros(len(current_in_A), dtype=float)
-    discharge_capacity = np.zeros(len(current_in_A), dtype=float)
+    # This is trapz-style accumulation, but kept as cumulative per-point values.
+    # np.trapz / np.trapezoid returns one scalar for the whole interval; here we
+    # need a running curve, so we accumulate trapezoid increments segment-wise.
+    charge_capacity = np.zeros(n, dtype=float)
+    discharge_capacity = np.zeros(n, dtype=float)
 
-    charge_running = 0.0
-    discharge_running = 0.0
-    prev_state = 0  # 1: charge, -1: discharge, 0: rest
+    eps = 0.0
+    state = np.zeros(n, dtype=np.int8)
+    state[current > eps] = 1
+    state[current < -eps] = -1
 
-    for i in range(len(current_in_A)):
-        curr = float(current_in_A[i])
-        delta_h = float(dt[i]) / 3600.0
+    # Segment boundaries where charge/discharge/rest state changes.
+    change_idx = np.flatnonzero(state[1:] != state[:-1]) + 1
+    bounds = np.concatenate(([0], change_idx, [n]))
 
-        if curr > 0.0:
-            if prev_state != 1:
-                charge_running = 0.0
-            charge_running += curr * delta_h
-            charge_capacity[i] = charge_running
-            discharge_capacity[i] = 0.0
-            prev_state = 1
-        elif curr < 0.0:
-            if prev_state != -1:
-                discharge_running = 0.0
-            discharge_running += (-curr) * delta_h
-            discharge_capacity[i] = discharge_running
-            charge_capacity[i] = 0.0
-            prev_state = -1
+    for j in range(len(bounds) - 1):
+        s = int(bounds[j])
+        e = int(bounds[j + 1])
+        if e - s <= 0:
+            continue
+
+        st = int(state[s])
+        if st == 0:
+            continue
+
+        if st > 0:
+            y = np.maximum(current[s:e], 0.0)
+            out = charge_capacity
         else:
-            charge_capacity[i] = 0.0
-            discharge_capacity[i] = 0.0
-            prev_state = 0
+            y = np.maximum(-current[s:e], 0.0)
+            out = discharge_capacity
+
+        dt_seg = dt[s:e]
+        prev_y = np.concatenate(([0.0], y[:-1]))
+        # per-point trapezoid increment in As, then convert to Ah
+        inc = 0.5 * (prev_y + y) * dt_seg / 3600.0
+        out[s:e] = np.cumsum(inc)
 
     return charge_capacity, discharge_capacity
-
-
-def _build_downsample_indices(time_in_s, current_in_A, interval_s):
-    if len(time_in_s) <= 2:
-        return np.arange(len(time_in_s), dtype=int)
-
-    keep_indices = [0]
-    last_kept_time = float(time_in_s[0])
-
-    for idx in range(1, len(time_in_s) - 1):
-        if float(time_in_s[idx]) - last_kept_time >= interval_s:
-            keep_indices.append(idx)
-            last_kept_time = float(time_in_s[idx])
-
-    if keep_indices[-1] != len(time_in_s) - 1:
-        keep_indices.append(len(time_in_s) - 1)
-
-    # Always keep phase transitions to preserve R-D-R-C structure after sampling.
-    eps = 1e-4
-    state = np.zeros(len(current_in_A), dtype=np.int8)
-    state[current_in_A > eps] = 1
-    state[current_in_A < -eps] = -1
-    transitions = np.where(state[1:] != state[:-1])[0] + 1
-
-    merged = np.unique(
-        np.concatenate((np.asarray(keep_indices, dtype=int), np.asarray(transitions, dtype=int)))
-    )
-    return np.asarray(merged, dtype=int)
 
 
 def _extract_cell_group_and_id(name):
@@ -335,9 +341,9 @@ def _process_single_file(parquet_file_path, raw_root_path, output_dir_path):
         if ('current (A)' not in selected_cols) or ('voltage (V)' not in selected_cols):
             return False, 'missing required columns'
 
-        # Always split cycles on raw 1s source data, then downsample to 30s at write time.
+        # Keep full source resolution for cycle split and pkl output.
         df = parquet_obj.read(columns=selected_cols, use_threads=False).to_pandas()
-        battery = organize_cell(df, cell_name, already_sampled=False)
+        battery = organize_cell(df, cell_name)
 
         if battery is None:
             return False, 'invalid or incomplete cycle data'
@@ -353,34 +359,10 @@ def _process_single_file(parquet_file_path, raw_root_path, output_dir_path):
             del battery
         gc.collect()
 
-
-def _worker_process_single_file(parquet_file_path, raw_root_path, output_dir_path, result_queue):
-    result_queue.put(_process_single_file(parquet_file_path, raw_root_path, output_dir_path))
-
-
-def _run_single_file_isolated(parquet_file, raw_root, output_dir):
-    ctx = mp.get_context('spawn')
-    result_queue = ctx.Queue(maxsize=1)
-    proc = ctx.Process(
-        target=_worker_process_single_file,
-        args=(str(parquet_file), str(raw_root), str(output_dir), result_queue)
-    )
-    proc.start()
-    proc.join()
-
-    if proc.exitcode != 0:
-        return False, f'worker exited with code {proc.exitcode}'
-    if result_queue.empty():
-        return False, 'worker returned no result'
-
-    return result_queue.get()
-
-
 REQUIRED_PARQUET_COLUMNS = [
     'current (A)',
     'voltage (V)',
     'rpt',
-    'step_no',
     'time_stamp',
     'del_time',
     'temp'
