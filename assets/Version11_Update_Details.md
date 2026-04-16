@@ -9,4 +9,4 @@ Cycling data updates:
 4. Sorting by `system_time` has been removed for the XJTU dataset to avoid random ordering of data points with identical `system_time` timestamps. Refer to [Issue #22](https://github.com/Ruifeng-Tan/BatteryLife/issues/22).
 
 Life label updates:
-1. The life labels for CALB dataset are corrected: We observed that labeles of some CALB batteries were computed wrongly in v10.
+1. The life labels for CALB dataset are corrected: We observed that labeles of some CALB batteries were computed wrongly in v10. The new life label calculation script has been updated.
