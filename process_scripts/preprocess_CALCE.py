@@ -14,7 +14,7 @@ from typing import List
 from pathlib import Path
 from scipy.signal import medfilt
 
-from batteryml import BatteryData, CycleData
+from batteryml import BatteryData, CycleData, CyclingProtocol
 from batteryml.builders import PREPROCESSORS
 from batteryml.preprocess.base import BasePreprocessor
 from .time_normalization_utils import normalize_cycle_times
@@ -112,6 +112,28 @@ class CALCEPreprocessor(BasePreprocessor):
             # Normalize time data across all cycles
             clean_cycles = normalize_cycle_times(clean_cycles, f'CALCE_{cell}')
 
+            charge_C_rate, discharge_C_rate = 0.0, 0.0
+            # Charge Protocol is constant current
+            if cell == 'CS2_33' or cell == 'CS2_34':
+                charge_C_rate=0.5
+                discharge_C_rate=0.5
+            elif cell == 'CS2_35' or cell == 'CS2_36' or cell == 'CS2_37' or cell == 'CS2_38':
+                charge_C_rate = 0.5
+                discharge_C_rate = 1.0
+            elif cell == 'CX2_16' or cell == 'CX2_33' or cell == 'CX2_35':
+                charge_C_rate = 0.5
+                discharge_C_rate = 0.5
+            elif cell == 'CX2_34' or  cell == 'CX2_36' or cell == 'CX2_37' or cell == 'CX2_38':
+                charge_C_rate = 0.5
+                discharge_C_rate = 1.0
+
+            charge_protocol = [CyclingProtocol(
+                rate_in_C=charge_C_rate, start_soc=0.0, end_soc=1.0
+            )]
+            discharge_protocol = [CyclingProtocol(
+                rate_in_C=discharge_C_rate, start_soc=1.0, end_soc=0.0
+            )]
+
             battery = BatteryData(
                 cell_id=f'CALCE_{cell}',
                 form_factor='prismatic',
@@ -119,6 +141,8 @@ class CALCEPreprocessor(BasePreprocessor):
                 cathode_material='LiCoO2',
                 cycle_data=clean_cycles,
                 nominal_capacity_in_Ah=C,
+                discharge_protocol=discharge_protocol,
+                charge_protocol=charge_protocol,
                 max_voltage_limit_in_V=4.2,
                 min_voltage_limit_in_V=2.7,
                 SOC_interval=soc_interval
