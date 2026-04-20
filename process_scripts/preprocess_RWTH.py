@@ -123,6 +123,7 @@ class RWTHPreprocessor(BasePreprocessor):
                 charge_protocol=[
                     CyclingProtocol(
                         current_in_A=4.0,
+                        rate_in_C=2.0,
                         start_voltage_in_V=3.5,
                         end_voltage_in_V=3.9),
                     CyclingProtocol(
@@ -133,6 +134,7 @@ class RWTHPreprocessor(BasePreprocessor):
                 discharge_protocol=[
                     CyclingProtocol(
                         current_in_A=4.0,
+                        rate_in_C=2.0,
                         start_voltage_in_V=3.9,
                         end_voltage_in_V=3.5),
                     CyclingProtocol(
@@ -152,8 +154,8 @@ class RWTHPreprocessor(BasePreprocessor):
             if not self.silent:
                 tqdm.write(f'File: {battery.cell_id} dumped to pkl file')
 
-        # Remove the extracted files
-        shutil.rmtree(subdir)
+        # # Remove the extracted files
+        # shutil.rmtree(subdir)
 
         return process_batteries_num, skip_batteries_num
 
@@ -173,7 +175,7 @@ def find_cycle_ends(current, lag=10, tolerance=0.1):
             enter_discharge_steps += 1
         else:
             enter_discharge_steps = 0
-        nms_size = 500
+        nms_size = 250
         if enter_discharge_steps == lag:
             t = i - lag + 1
             if t > nms_size and np.max(is_cycle_end[t-nms_size:t]) > 0:
