@@ -84,6 +84,7 @@ class XJTUPreprocessor(BasePreprocessor):
 def organize_cell(timeseries_df, name, path):
     cycle_data = []
     for cycle_index, df in timeseries_df.groupby('cycle_number'):
+        # skip the first RPT test cycle
         if cycle_index < 2:
             continue
         cycle_data.append(CycleData(
