@@ -2,6 +2,8 @@
 
 This is the official repository for [BatteryLife: A Comprehensive Dataset and Benchmark for Battery Life Prediction](https://dl.acm.org/doi/10.1145/3711896.3737372). If you find this repository useful, we would appreciate citations to our paper and stars to this repository.
 
+:triangular_flag_on_post: **News** (2026.04) BatteryLife v11 is now released, with fixes for some reported issues. Please see the [update details](https://github.com/Ruifeng-Tan/BatteryLife/blob/main/assets/Version11_Update_Details.md) for more information.
+
 :triangular_flag_on_post: **News** (2026.02) BatteryLife has exceeded 30,000 downloads. BatteryLife v10 is now released, with fixes for issues reported over the past year (update details are available [here](https://github.com/Ruifeng-Tan/BatteryLife/blob/main/assets/Version10_Update_Details.md)). We sincerely appreciate the support from the community.
 
 :triangular_flag_on_post:**News** (2025.10) Added the standardized [SDU dataset](https://www.cell.com/cell-reports-physical-science/fulltext/S2666-3864(25)00256-5) to BatteryLife. Corrected the time_in_s column for all batteries.
@@ -32,7 +34,7 @@ This is the official repository for [BatteryLife: A Comprehensive Dataset and Be
 The processed datasets can be accessed via multiple ways:
 
 1. You can download the datasets from [Huggingface](https://huggingface.co/datasets/Hongwxx/BatteryLife_processed/tree/main) [[tutorial]](./assets/Data_download.md).
-2. You can download the datasets from [Zenodo](https://zenodo.org/records/18646655).
+2. You can download the datasets from [Zenodo](https://zenodo.org/records/19688272).
 
 Note that brief introductions to each dataset are available under the directory of each dataset.
 
