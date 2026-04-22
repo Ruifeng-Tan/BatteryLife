@@ -33,6 +33,7 @@ preprocess_commands = [
     'batteryml preprocess CALB ./datasets/raw/CALB ./datasets/processed/CALB/',
     'batteryml preprocess NA ./datasets/raw/NAion ./datasets/processed/NA-ion/',
     'batteryml preprocess ZNion ./datasets/raw/ZNion ./datasets/processed/ZN-ion/',
+    # use the same command for the following datasets, e.g., SDU et al.
 ]
 
 for command in preprocess_commands:
