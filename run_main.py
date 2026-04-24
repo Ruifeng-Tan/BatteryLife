@@ -255,12 +255,17 @@ for ii in range(args.itr):
     
     if args.lradj == 'COS':
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(model_optim, T_max=20, eta_min=1e-8)
+    elif args.lradj == 'TST':
+        scheduler = lr_scheduler.OneCycleLR(
+            optimizer=model_optim,
+            steps_per_epoch=train_steps,
+            pct_start=args.pct_start,
+            epochs=args.train_epochs,
+            max_lr=args.learning_rate
+        )
     else:
-        scheduler = lr_scheduler.OneCycleLR(optimizer=model_optim,
-                                            steps_per_epoch=train_steps,
-                                            pct_start=args.pct_start,
-                                            epochs=args.train_epochs,
-                                            max_lr=args.learning_rate)
+        # constant
+        scheduler = None
 
     life_classes = json.load(open('data_provider/life_classes.json'))
     class_numbers = len(list(life_classes.keys()))
