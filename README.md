@@ -216,6 +216,16 @@ This repo is constructed based on the following repos:
 - https://github.com/thuml/Time-Series-Library
 - https://github.com/microsoft/BatteryML
 
+
+## Star History
+
+<p align="center">
+  <a href="https://www.star-history.com/#Ruifeng-Tan/BatteryLife&Date">
+    <img src="https://api.star-history.com/svg?repos=Ruifeng-Tan/BatteryLife&type=Date" alt="Star History Chart">
+  </a>
+</p>
+
+
 ## All thanks to our contributors
 
 <a href="https://github.com/Ruifeng-Tan/BatteryLife/graphs/contributors">
