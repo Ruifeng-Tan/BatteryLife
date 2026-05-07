@@ -91,3 +91,16 @@ class split_recorder():
     NAion_2024_train_files = ['NA-ion_270040-1-2-63.pkl', 'NA-ion_270040-6-8-24.pkl', 'NA-ion_270040-1-5-60.pkl', 'NA-ion_270040-1-6-59.pkl', 'NA-ion_270040-1-7-58.pkl', 'NA-ion_270040-1-8-57.pkl', 'NA-ion_270040-2-5-12.pkl', 'NA-ion_270040-3-3-54.pkl', 'NA-ion_270040-3-5-52.pkl', 'NA-ion_270040-2-2-12.pkl', 'NA-ion_270040-3-8-49.pkl', 'NA-ion_270040-4-2-47.pkl', 'NA-ion_270040-4-3-46.pkl', 'NA-ion_270040-4-6-43.pkl', 'NA-ion_270040-5-3-37.pkl', 'NA-ion_270040-5-5-35.pkl', 'NA-ion_270040-5-7-33.pkl', 'NA-ion_270040-5-8-32.pkl', 'NA-ion_270040-6-6-26.pkl', 'NA-ion_270040-5-6-34.pkl']
     NAion_2024_val_files = ['NA-ion_270040-4-1-48.pkl', 'NA-ion_270040-7-1-23.pkl', 'NA-ion_270040-6-2-30.pkl', 'NA-ion_270040-3-2-55.pkl', 'NA-ion_270040-5-2-38.pkl', 'NA-ion_270040-3-1-56.pkl']
     NAion_2024_test_files = ['NA-ion_270040-8-5-16.pkl', 'NA-ion_270040-3-4-53.pkl', 'NA-ion_270040-5-1-39.pkl', 'NA-ion_270040-3-7-50.pkl', 'NA-ion_270040-1-3-62.pkl']
+
+
+    MIX_all_train_files = MIX_large_train_files + ZNcoin_train_files + CALB_train_files + NAion_2021_train_files
+    MIX_all_val_files = MIX_large_val_files + ZNcoin_val_files + CALB_val_files + NAion_2021_val_files
+    MIX_all_test_files = MIX_large_test_files + ZNcoin_test_files + CALB_test_files + NAion_2021_test_files
+
+    MIX_all_42_train_files = MIX_large_train_files + ZN_42_train_files + CALB_42_train_files + NAion_42_train_files
+    MIX_all_42_val_files = MIX_large_val_files + ZN_42_val_files + CALB_42_val_files + NAion_42_val_files
+    MIX_all_42_test_files = MIX_large_test_files + ZN_42_test_files + CALB_42_test_files + NAion_42_test_files
+
+    MIX_all_2024_train_files = MIX_large_train_files + ZN_2024_train_files + CALB_2024_train_files + NAion_2024_train_files
+    MIX_all_2024_val_files = MIX_large_val_files + ZN_2024_val_files + CALB_2024_val_files + NAion_2024_val_files
+    MIX_all_2024_test_files = MIX_large_test_files + ZN_2024_test_files + CALB_2024_test_files + NAion_2024_test_files
