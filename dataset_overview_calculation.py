@@ -129,8 +129,18 @@ print_dataset_overview(
     aging_conditions,
 )
 
-
-
-
+mix_all_files = (
+    split_recorder.MIX_all_train_files +
+    split_recorder.MIX_all_val_files +
+    split_recorder.MIX_all_test_files
+)
+_, mix_all_aging_condition_num = get_agingCondition_battery_num(
+    mix_all_files,
+    aging_conditions,
+)
+print(
+    'Total unique aging conditions in MIX_all files with lifetime > 100:',
+    mix_all_aging_condition_num,
+)
 
 
