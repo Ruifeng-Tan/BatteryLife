@@ -107,3 +107,30 @@
 | 40                             | ZN-coin                                                      |
 | 45                             | CALB, MICH_MC, MICH_BL, MICH_03H_pouch_NMC_45C_0-100_0.2-0.2C, MICH_06H_pouch_NMC_45C_0-100_1.5-1.5C, MICH_09H_pouch_NMC_45C_0-100_2-2C, MICH_12H_pouch_NMC_45C_0-100_0.2-1.5C, MICH_15H_pouch_NMC_45C_50-100_0.2-0.2C, MICH_18H_pouch_NMC_45C_50-100_0.2-1.5C |
 
+## Unique Chemical Systems
+**Date:** 2026-05-24
+
+We have updated the statistics of unique chemical systems in the Li-ion domain. Here, a chemical system is defined as a unique combination of positive electrode, negative electrode, and electrolyte. Based on this definition, the 13 Li-ion datasets contain **15 unique chemical systems** rather than 13 reported in the original paper. The detailed list is provided below. Dataset sources refer to dataset or subdataset names when multiple chemical systems are included in one dataset.
+
+| No. | Positive electrode | Negative electrode | Electrolyte | Dataset source |
+|---:|---|---|---|---|
+| 1 | LiCoO2 (LCO) | Graphite | Unknown | CALCE |
+| 2 | Lithium iron phosphate (LiFePO4) | Graphite | Unknown | MATR, HUST, SNL_LFP |
+| 3 | LiCoO2 (LCO) and LiNi0.4Co0.4Mn0.2O2 (NCM442) | Graphite | Unknown | HNEI |
+| 4 | Lithium nickel manganese cobalt oxide (NCM) | Carbon | Unknown | RWTH |
+| 5 | Li(Ni0.81Co0.14Al0.05)O2 (NCA811405) | Graphite | Unknown | SNL_NCA |
+| 6 | LiNi(0.84Co0.1Mn0.06)O2 (NCM840610) | Graphite | Unknown | SNL_NCM |
+| 7 | Li(Ni0.8Co0.15Al0.05)O2 (NCA801505) | Graphite | Unknown | UL_PUR |
+| 8 | Li(Ni0.33Co0.33Mn0.33)O2 (NCM111) | Graphite | 1.0 M LiPF6, EC:EMC (3:7), 2 wt% VC, 4 g/Ah additive | MICH |
+| 9 | Li(Ni0.33Co0.33Mn0.33)O2 (NCM111) | Graphite:PVDF (95:5) | 1 M LiPF6 and 2% EC:EMC (3:7) solvent | MICH_EXP |
+| 10 | Li(Ni0.5Co0.2Mn0.3)O2 (NCM523) | Artificial graphite | 1 M LiPF6 in EC/EMC/DMC (1:1:1 by volume) with 2% VC | Stanford |
+| 11 | Li0.86(Ni0.86Co0.11Al0.03)O2 (NCA861103) | Graphite + 2 wt.% Si | Non-aqueous solution with LiPF6 | Tongji1 |
+| 12 | Li0.84(Ni0.83Co0.11Mn0.07)O2 (NCM831107) | Graphite + 2 wt.% Si | Non-aqueous solution with LiPF6 | Tongji2 |
+| 13 | 42 wt.% Li(NiCoMn)O2 blended with 58 wt.% Li(NiCoAl)O2 (NCM+NCA) | Graphite | Non-aqueous solution with LiPF6 | Tongji3 |
+| 14 | Li(Ni0.5Co0.2Mn0.3)O2 (NCM523) | Graphite | Unknown | XJTU |
+| 15 | Lithium nickel manganese cobalt oxide (NCM) | Graphite | Unknown | ISU_ILCC |
+
+When CALB, Na-ion, and Zn-ion domains are further included, the total number of unique chemical systems becomes 61 under the same definition.
+
+## Further details about Na-ion dataset
+For the Na-ion dataset, detailed cell-chemistry metadata, including the positive electrode material, negative electrode material, and electrolyte composition, are not disclosed in the released records. To support reproducibility and transparent data interpretation, we provide the available battery specifications and supporting documentation in [assets/figures](./figures/).
