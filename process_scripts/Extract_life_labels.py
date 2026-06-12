@@ -5,6 +5,9 @@ import numpy as np
 import json
 import os
 from tqdm import tqdm
+from Extract_life_labels_tools.Farasis_tools import extract_farasis_life_labels_from_excel
+from Extract_life_labels_tools.XJTU_tools import extract_xjtu_life_labels
+
 
 def load_calb_capacity_from_excel(sheets, CALB_summary_file):
     capacity_data_dict = {}
@@ -67,6 +70,39 @@ def cal_life_labels(dataset_name, dataset_root_path, output_path):
 
     name_lables = {}
     abadon_count = 0
+
+    if dataset_name == 'XJTU':
+        if not os.path.exists(f'{output_path}'):
+            os.makedirs(f'{output_path}')
+        name_lables = extract_xjtu_life_labels(
+            files,
+            dataset_path,
+        )
+        valid_count = sum(1 for value in name_lables.values() if np.isfinite(value))
+        print(
+            f'XJTU labels extracted for {len(name_lables)} batteries | '
+            f'80% labels: {valid_count}'
+        )
+        print(f'Labels are saved in {output_path}/{dataset_name}_labels.json')
+        with open(f'{output_path}/{dataset_name}_labels.json', 'w') as f:
+            json.dump(name_lables, f)
+        return
+
+    if dataset_name == 'Farasis':
+        if not os.path.exists(f'{output_path}'):
+            os.makedirs(f'{output_path}')
+        name_lables, abadon_count = extract_farasis_life_labels_from_excel(
+            files,
+        )
+        print(
+            f'Totally {len(name_lables)} Farasis batteries have EFC life labels from Excel | '
+            f'{abadon_count} batteries are excluded.'
+        )
+        print(f'Labels are saved in {output_path}/{dataset_name}_labels.json')
+        with open(f'{output_path}/{dataset_name}_labels.json', 'w') as f:
+            json.dump(name_lables, f)
+        return
+
     for file_name in tqdm(files):
         if dataset_name != 'CALB':
             data = pickle.load(open(f'{dataset_path}/{file_name}', 'rb'))

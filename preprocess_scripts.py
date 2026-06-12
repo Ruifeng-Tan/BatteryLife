@@ -34,7 +34,8 @@ preprocess_commands = [
     'batteryml preprocess NA ./datasets/raw/NAion ./datasets/processed/NA-ion/',
     'batteryml preprocess ZNion ./datasets/raw/ZNion ./datasets/processed/ZN-ion/',
     # use the same command for the following datasets, e.g., SDU, Farasis et al.
-    'batteryml preprocess Farasis ./dataset/raw/Farasis ./dataset/processed/Farasis/',
+    'batteryml preprocess Farasis ./datasets/raw/SDU ./datasets/processed/SDU/',
+    'batteryml preprocess Farasis ./datasets/raw/Farasis ./datasets/processed/Farasis/'
 ]
 
 for command in preprocess_commands:

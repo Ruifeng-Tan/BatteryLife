@@ -15,7 +15,6 @@ from batteryml.data import BatteryData, CycleData, CyclingProtocol
 from batteryml.builders import PREPROCESSORS
 from batteryml.preprocess.base import BasePreprocessor
 
-
 FARASIS_C_RATE = 0.333333
 
 
@@ -91,7 +90,7 @@ def organize_cell(timeseries_df, name):
     cycle_ids, cycle_attributes = _infer_cycle_ids_and_attributes(df)
     cycle_data = []
     all_voltages = []
-    cumulative_time_offset = 0.0
+    nominal_capacity = _infer_nominal_capacity(name)
 
     # Build base arrays once and slice by explicit integer indices to keep strict alignment.
     temp_all = None
@@ -106,9 +105,7 @@ def organize_cell(timeseries_df, name):
         if len(cycle_idx) < 2:
             continue
 
-        time_cycle = time_all[cycle_idx]
-
-        keep_indices = np.arange(len(time_cycle), dtype=int)
+        keep_indices = np.arange(len(cycle_idx), dtype=int)
 
         sampled_idx = cycle_idx[keep_indices]
 
@@ -118,14 +115,10 @@ def organize_cell(timeseries_df, name):
         current_in_A_numeric = current_all_numeric[sampled_idx]
         time_in_s = time_all[sampled_idx]
 
-        # Keep time continuous across cycles instead of resetting to zero each cycle.
-        time_in_s = time_in_s - float(time_in_s[0]) + cumulative_time_offset
         charge_capacity_in_Ah, discharge_capacity_in_Ah = _integrate_capacity(current_in_A_numeric, time_in_s)
 
         if len(time_in_s) < 2:
             continue
-
-        cumulative_time_offset = float(time_in_s[-1])
 
         temperature_in_C = [float('nan')] * len(time_in_s)
         if temp_all is not None:
@@ -134,7 +127,7 @@ def organize_cell(timeseries_df, name):
                 filled_temp = np.nan_to_num(temp_array, nan=float(np.nanmedian(temp_array[np.isfinite(temp_array)])))
                 temperature_in_C = filled_temp[keep_indices].tolist()
 
-        cycle_data.append(CycleData(
+        cycle = CycleData(
             cycle_number=int(cycle_number),
             voltage_in_V=voltage_in_V.tolist(),
             current_in_A=current_in_A.tolist(),
@@ -143,14 +136,13 @@ def organize_cell(timeseries_df, name):
             charge_capacity_in_Ah=charge_capacity_in_Ah.tolist(),
             time_in_s=time_in_s.tolist(),
             attribute=cycle_attributes.get(int(cycle_number), 'Cycling')
-        ))
+        )
+        cycle_data.append(cycle)
 
         all_voltages.append(voltage_all_numeric[sampled_idx])
 
     if len(cycle_data) == 0:
         return None
-
-    nominal_capacity = _infer_nominal_capacity(name)
 
     voltage_concat = np.concatenate(all_voltages)
     min_voltage = float(np.nanmin(voltage_concat))
@@ -194,6 +186,9 @@ def _infer_cycle_ids_and_attributes(df):
     rpt_raw = pd.to_numeric(df['rpt'], errors='coerce').to_numpy(dtype=float)
     is_blank = ~np.isfinite(rpt_raw)
 
+    current_values = pd.to_numeric(df['current (A)'], errors='coerce').to_numpy(dtype=float)
+    time_values = _build_time_in_seconds(df)
+
     cycle_no = 1
     start = 0
     while start < n:
@@ -201,9 +196,19 @@ def _infer_cycle_ids_and_attributes(df):
             end = start + 1
             while end < n and is_blank[end]:
                 end += 1
-            cycle_ids[start:end] = cycle_no
-            cycle_attrs[cycle_no] = 'Cycling'
-            cycle_no += 1
+            # Within blank-rpt regions, further split into full charge/discharge cycles.
+            local_ids = _split_cycling_segment_by_full_cycles(
+                current_values[start:end],
+                time_values[start:end],
+            )
+            for local_cycle in np.unique(local_ids):
+                mask = (local_ids == local_cycle)
+                if int(np.count_nonzero(mask)) < 2:
+                    continue
+                abs_idx = np.flatnonzero(mask) + start
+                cycle_ids[abs_idx] = cycle_no
+                cycle_attrs[cycle_no] = 'Cycling'
+                cycle_no += 1
             start = end
             continue
 
@@ -217,6 +222,124 @@ def _infer_cycle_ids_and_attributes(df):
         start = end
 
     return cycle_ids, cycle_attrs
+
+
+def _split_cycling_segment_by_full_cycles(current_values, time_values=None):
+    current = np.asarray(current_values, dtype=float)
+    n = len(current)
+    if n == 0:
+        return np.zeros(0, dtype=int)
+
+    # Treat tiny values and NaNs as rest.
+    current = np.nan_to_num(current, nan=0.0)
+    abs_current = np.abs(current)
+    scale = float(np.nanpercentile(abs_current, 90)) if n > 0 else 0.0
+    eps = max(1e-8, 0.02 * scale)
+    state = np.zeros(n, dtype=np.int8)
+    state[current > eps] = 1
+    state[current < -eps] = -1
+
+    # If no clear charge/discharge signal exists, keep a single cycling segment.
+    if not np.any(state != 0):
+        return np.zeros(n, dtype=int)
+
+    # Fill rest points with nearest active direction to avoid splitting on CV/rest tails.
+    nz = np.flatnonzero(state != 0)
+    first_nz = int(nz[0])
+    last_nz = int(nz[-1])
+    state[:first_nz] = state[first_nz]
+    state[last_nz + 1:] = state[last_nz]
+    for i in range(first_nz + 1, last_nz + 1):
+        if state[i] == 0:
+            state[i] = state[i - 1]
+
+    # Build active direction runs.
+    run_starts = [0]
+    run_states = [int(state[0])]
+    for i in range(1, n):
+        if int(state[i]) != int(state[i - 1]):
+            run_starts.append(i)
+            run_states.append(int(state[i]))
+    run_ends = run_starts[1:] + [n]
+
+    active_runs = []
+    for st, ed, sgn in zip(run_starts, run_ends, run_states):
+        if sgn != 0:
+            active_runs.append((int(st), int(ed), int(sgn)))
+
+    if len(active_runs) <= 1:
+        return np.zeros(n, dtype=int)
+
+    if time_values is None:
+        time_s = np.arange(n, dtype=float)
+    else:
+        time_s = np.asarray(time_values, dtype=float)
+        if len(time_s) != n:
+            time_s = np.arange(n, dtype=float)
+    dt = np.diff(time_s, prepend=time_s[0])
+    dt = np.maximum(dt, 0.0)
+
+    # Mark very small/short direction runs as pulses so they can be merged into nearby full cycles.
+    run_throughput = []
+    run_duration = []
+    run_points = []
+    for st, ed, _ in active_runs:
+        seg_i = np.abs(current[st:ed])
+        seg_dt = dt[st:ed]
+        throughput_ah = float(np.sum(seg_i * seg_dt) / 3600.0)
+        duration_s = float(np.sum(seg_dt))
+        run_throughput.append(throughput_ah)
+        run_duration.append(duration_s)
+        run_points.append(int(ed - st))
+
+    run_throughput_arr = np.asarray(run_throughput, dtype=float)
+    valid_tp = run_throughput_arr[np.isfinite(run_throughput_arr) & (run_throughput_arr > 0)]
+    median_tp = float(np.nanmedian(valid_tp)) if valid_tp.size > 0 else 0.0
+    min_tp = max(1e-4, 0.01 * median_tp)
+    min_pts = 5
+    min_dur_s = 60.0
+
+    is_pulse_run = np.array([
+        (run_points[i] < min_pts) or (run_duration[i] < min_dur_s) or (run_throughput[i] < min_tp)
+        for i in range(len(active_runs))
+    ], dtype=bool)
+
+    major_indices = np.flatnonzero(~is_pulse_run)
+    if len(major_indices) <= 1:
+        return np.zeros(n, dtype=int)
+
+    run_cycle_ids = np.full(len(active_runs), -1, dtype=int)
+    cycle_idx = 0
+    j = 0
+    while j + 1 < len(major_indices):
+        r0 = int(major_indices[j])
+        r1 = int(major_indices[j + 1])
+        _, _, sgn0 = active_runs[r0]
+        _, _, sgn1 = active_runs[r1]
+        if int(sgn1) == -int(sgn0):
+            run_cycle_ids[r0:r1 + 1] = cycle_idx
+            cycle_idx += 1
+            j += 2
+        else:
+            j += 1
+
+    # If no full opposite-direction pair is found, do not over-split.
+    if cycle_idx == 0:
+        return np.zeros(n, dtype=int)
+
+    # Merge all remaining runs (mostly pulses) into nearest existing full cycle.
+    assigned = np.flatnonzero(run_cycle_ids >= 0)
+    for r in range(len(active_runs)):
+        if run_cycle_ids[r] >= 0:
+            continue
+        nearest = int(assigned[np.argmin(np.abs(assigned - r))])
+        run_cycle_ids[r] = run_cycle_ids[nearest]
+
+    local_cycle_ids = np.zeros(n, dtype=int)
+    for r, (st, ed, _) in enumerate(active_runs):
+        local_cycle_ids[st:ed] = int(run_cycle_ids[r])
+
+    return local_cycle_ids
 
 
 def _build_time_in_seconds(cycle_df):
@@ -365,5 +488,7 @@ REQUIRED_PARQUET_COLUMNS = [
     'rpt',
     'time_stamp',
     'del_time',
-    'temp'
+    'temp',
+    'total_chg_thrgh_ah_rounded',
+    'total_dischg_thrgh_ah_rounded',
 ]
