@@ -154,6 +154,7 @@ sh ./train_eval_scripts/domain_adaptation_script.sh
 - Further details of data statistics are available at [Further_details_of_data_statistics.md](./assets/Further_details_of_data_statistics.md).
 - Further details of processed charge and discharge capacity data are available at [Further_details_of_processed_charge_and_discharge_capacity_data.md](./assets/Further_details_of_processed_charge_and_discharge_capacity_data.md).
 - BatteryLife update details are available at [assets folder](https://github.com/Ruifeng-Tan/BatteryLife/tree/main/assets).
+- The hyperparameters used to reproduce the reported results are provided in the [selected hyperparameters file](./assets/Selected_hyperparameters.md).
 
 ## Welcome contributions
 

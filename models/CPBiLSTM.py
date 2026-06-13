@@ -43,7 +43,7 @@ class Model(nn.Module):
         self.intra_embed = nn.Linear(self.charge_discharge_length*3, self.d_model)
         self.intra_MLP = nn.ModuleList([MLPBlock(self.d_model, self.d_ff, self.d_model, self.drop_rate) for _ in range(configs.e_layers)])
         # self.norm = nn.LayerNorm(configs.d_ff*2)
-        self.inter_cycle_BiLSTM = nn.LSTM(configs.d_model, configs.d_ff, configs.lstm_layers, batch_first=True, dropout=self.drop_rate, bidirectional=True)
+        self.inter_cycle_BiLSTM = nn.LSTM(configs.d_model, configs.d_ff, configs.d_layers, batch_first=True, dropout=self.drop_rate, bidirectional=True)
 
         self.projection = nn.Linear(configs.d_ff*2, configs.output_num)
 
